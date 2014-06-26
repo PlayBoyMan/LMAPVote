@@ -1,0 +1,11 @@
+"AddonInfo"
+{
+	"name"				"LMAPVote"
+	"version"			"0.5A"
+	"up_date"			""
+	"author_name"			"L7D"
+	"author_email"			"smhjyh2009@gmail.com"
+	"author_url"			""
+	"info"				""
+	"override"			"0"
+}
