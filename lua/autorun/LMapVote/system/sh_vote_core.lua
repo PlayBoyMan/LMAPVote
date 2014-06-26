@@ -228,11 +228,13 @@ if ( SERVER ) then
 			if ( GetGlobalInt( "LMapvote.system.vote.Timer" ) == 0 ) then
 				if ( !runinit ) then
 					for _, ent in pairs( player.GetAll( ) ) do
-						netstream.Start(
-							ent, 
-							"LMapvote.system.vote.ResultSend",
-							{ Won = LMapvote.system.vote.GetWinnerMap( ).map, Count = LMapvote.system.vote.GetWinnerMap( ).count }
-						)
+						if ( !ent:IsBot( ) ) then
+							netstream.Start(
+								ent, 
+								"LMapvote.system.vote.ResultSend",
+								{ Won = LMapvote.system.vote.GetWinnerMap( ).map, Count = LMapvote.system.vote.GetWinnerMap( ).count }
+							)
+						end
 					end
 					runinit = true
 				end
@@ -244,8 +246,18 @@ if ( SERVER ) then
 						current_receiver = current_receiver + 1
 					end
 				end )
+
+				local player_Count = 0
 				
-				if ( current_receiver >= #player.GetAll( ) ) then
+				for k, v in pairs( player.GetAll( ) ) do
+					if ( IsValid( v ) ) then
+						if ( !v:IsBot( ) ) then
+							player_Count = player_Count + 1
+						end
+					end
+				end
+
+				if ( current_receiver >= player_Count ) then
 					SetGlobalInt( "LMapvote.system.vote.Timer", 60 )
 					LMapvote.system.vote.SetStatus( false )
 					for _, ent in pairs( player.GetAll( ) ) do
