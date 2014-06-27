@@ -259,7 +259,8 @@ function VOTEPANEL:Init( )
 			draw.SimpleText( math.Round( percentAni ) .. " %", "LMapVote_font_01", ( 15 + w * 0.2 - 15 ) / 2, ( h * 0.5 + 65 ) + ( h * 0.35 ) / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			
 			draw.SimpleText( "LMAPVote", "LMapVote_font_01", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "Copyright ( C ) 2014 ~ L7D : Version 0.5A", "LMapVote_font_04", 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMapVote_font_05", 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMapVote_font_05", 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			draw.SimpleText( GetGlobalInt( "LMapvote.system.vote.Timer" ), "LMapVote_font_03", w * 0.2 - 30, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		else
 			self.LeftMenu:SetVisible( false )
@@ -269,7 +270,8 @@ function VOTEPANEL:Init( )
 			self.ChatRun:SetVisible( false )
 			
 			draw.SimpleText( "LMAPVote", "LMapVote_font_01", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "Copyright ( C ) 2014 ~ L7D : Version 0.5A", "LMapVote_font_04", 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMapVote_font_05", 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMapVote_font_05", 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			
 			draw.SimpleText( "Vote Finished", "LMapVote_font_01", w / 2, 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
@@ -333,10 +335,11 @@ function VOTEPANEL:Init( )
 	self.ChatRun = vgui.Create( "DButton", self.Frame )
 	self.ChatRun:SetSize( self.w * 0.1, 30 )
 	self.ChatRun:SetPos( self.w * 0.9 - 15, self.h * 0.9 + 30 )
-	self.ChatRun:SetFont( "LBox_font_02" )
+	self.ChatRun:SetFont( "LMapVote_font_03" )
 	self.ChatRun:SetText( "Send" )
 	self.ChatRun:SetColor( Color( 0, 0, 0, 255 ) )
 	self.ChatRun.DoClick = function( )
+		LMapvote.PlayButtonSound( )
 		if ( string.len( self.ChatEntry:GetValue( ) ) > 0 ) then
 			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__CHATONLY, self.ChatEntry:GetValue( ) )
 			self.ChatEntry:SetText( "" )
@@ -363,6 +366,7 @@ function VOTEPANEL:Init( )
 	end
 	
 	self.ChatEntry.OnEnter = function( )
+		LMapvote.PlayButtonSound( )
 		if ( string.len( self.ChatEntry:GetValue( ) ) > 0 ) then
 			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__CHATONLY, self.ChatEntry:GetValue( ) )
 			self.ChatEntry:SetText( "" )
@@ -493,9 +497,8 @@ function VOTEPANEL:Refresh_MapList( )
 			draw.SimpleText( value.Name, "LMapVote_font_02", w / 2, h - ( 30 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 		map.DoClick = function( )
+			LMapvote.PlayButtonSound( )
 			LMapvote.system.vote.Vote( LocalPlayer( ), value.Name )
-			
-			
 			timer.Simple( 0.3, function( )
 				self.percent_count = 0
 				for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do

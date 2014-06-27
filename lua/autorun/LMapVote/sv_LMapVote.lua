@@ -4,3 +4,4 @@
 --]]
 
 resource.AddFile( "materials/LMAPVote/unknown.jpg" )
+resource.AddFile( "sound/LMAPVote/Enter.wav" )

@@ -3,4 +3,4 @@ LMAPVote
 
 The powerful and beautiful map vote system for Garry's Mod.
 
-Version 0.5A
+Version 1.0b

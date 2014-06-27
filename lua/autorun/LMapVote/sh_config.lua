@@ -5,7 +5,7 @@
 
 LMapvote.config = LMapvote.config or { }
 
-LMapvote.config.Version = "0.5a" -- Do not edit this .. please .. ;>
+LMapvote.config.Version = "1.0b" -- Do not edit this. ;>
 
 --[[
 	How can i change command and other permission?

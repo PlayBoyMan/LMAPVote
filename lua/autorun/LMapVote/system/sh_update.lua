@@ -6,6 +6,7 @@
 LMapvote.update = LMapvote.update or { }
 
 function LMapvote.update.Check( )
+
 	local function func( )
 		LMapvote.update.buffer = { }
 			
@@ -13,22 +14,33 @@ function LMapvote.update.Check( )
 			local compile = CompileString( str, "LMapvote.update.Check( ) function", false )
 			local tab = compile( )
 			LMapvote.update.buffer = tab
+			for _, ent in pairs( player.GetAll( ) ) do
+				netstream.Start( ent, "LMapvote.update.Send", {
+					Tab = LMapvote.update.buffer
+				} )
+			end
+			if ( LMapvote.config.Version != LMapvote.update.buffer[ "Latest_Version" ] ) then
+				LMapvote.kernel.Print( LMapvote.rgb.Error, "You need update! - " .. LMapvote.update.buffer[ "Latest_Version" ] )
+			end
 		end
 			
 		http.Fetch( "http://textuploader.com/k6d5/raw",
 			function( value )
+				if ( string.find( value, "Error 404</p>" ) ) then
+					SetGlobalBool( "LMapvote.update.Status", false )
+					LMapvote.kernel.Print( LMapvote.rgb.Red, "Update check failed, - 404 Error." )
+					return
+				end
+				SetGlobalBool( "LMapvote.update.Status", true )
 				run( value )
 			end,
 			function( err )
 				LMapvote.kernel.Print( LMapvote.rgb.Red, "Update check failed, - " .. err )
+				SetGlobalBool( "LMapvote.update.Status", false )
 			end
 		)
 
-		for _, ent in pairs( player.GetAll( ) ) do
-			netstream.Start( ent, "LMapvote.update.Send", {
-				Tab = LMapvote.update.buffer
-			} )
-		end
+		
 	end
 		
 	if ( SERVER ) then
@@ -37,6 +49,9 @@ function LMapvote.update.Check( )
 			func( )
 		end )
 	elseif ( CLIENT ) then
+		if ( adminPanel and IsValid( adminPanel ) ) then
+			adminPanel.UpdateCheckDeleayed = true
+		end
 		netstream.Start( "LMapvote.update.FunctionSend", 1 )
 	end
 end
@@ -59,5 +74,13 @@ elseif ( CLIENT ) then
 	
 	netstream.Hook( "LMapvote.update.Send", function( data )
 		LMapvote.update.buffer = data.Tab
+		
+		if ( adminPanel and IsValid( adminPanel ) ) then
+			adminPanel.UpdateCheckDeleayed = false
+		end
 	end )
+	
+	do
+		LMapvote.update.Check( )
+	end
 end
