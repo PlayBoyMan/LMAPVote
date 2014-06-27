@@ -3,9 +3,9 @@
 		Copyright ( C ) 2014 ~ L7D
 --]]
 
-LMapvote = LMapvote or {}
-LMapvote.kernel = LMapvote.kernel or {}
-LMapvote.system = LMapvote.system or {}
+LMapvote = LMapvote or { }
+LMapvote.kernel = LMapvote.kernel or { }
+LMapvote.system = LMapvote.system or { }
 
 CreateConVar( "LMAPVote_VoteTime", 60, { FCVAR_NONE } ) // Set map vote time.
 
@@ -19,20 +19,18 @@ LMapvote.rgb = {
 }
 
 function LMapvote.kernel.Print( colCode, message )
-	if ( type( colCode ) == "table" and type( message ) == "string" ) then
-		MsgC( colCode, "[LMapVote] " .. message .. "\n" )
-	end
+	MsgC( colCode, "[LMapVote] " .. message .. "\n" )
 end
 
 function LMapvote.kernel.FindPlayerByName( name )
 	if ( type( name ) == "string" ) then
 		local lowerst_name = string.lower( name )
-		for k, v in pairs( player.GetAll( ) ) do
-			local ply_name = string.lower( v:Name() )
+		for key, value in pairs( player.GetAll( ) ) do
+			local ply_name = string.lower( value:Name( ) )
 			if ( string.match( ply_name, lowerst_name ) ) then
-				return v
+				return value
 			else
-				if ( k == #player.GetAll() ) then
+				if ( key == #player.GetAll( ) ) then
 					return ""
 				end
 			end
@@ -69,36 +67,36 @@ function LMapvote.kernel.Include( fileName )
 			include( fileName )
 		end
 	end
-	LMapvote.kernel.Print( LMapvote.rgb.Violet, "Loaded lua file : " .. fileName )
 end
 
 function LMapvote.kernel.IncludeFolder( folder )
 	if ( !folder ) then return end
 	local find = file.Find( "autorun/LMapvote/" .. folder .. "/*.lua", "LUA" ) or nil
 	if ( !find ) then return end
-	for k, v in pairs( find ) do
-		if ( string.find( v, "sv_" ) and SERVER ) then
-			include( "autorun/LMapvote/" .. folder .. "/" .. v )
-		elseif ( string.find( v, "sh_" ) ) then
-			AddCSLuaFile( "autorun/LMapvote/" .. folder .. "/" .. v )
+	for key, value in pairs( find ) do
+		if ( string.find( value, "sv_" ) and SERVER ) then
+			include( "autorun/LMapvote/" .. folder .. "/" .. value )
+		elseif ( string.find( value, "sh_" ) ) then
+			AddCSLuaFile( "autorun/LMapvote/" .. folder .. "/" .. value )
 			if ( SERVER ) then
-				include( "autorun/LMapvote/" .. folder .. "/" .. v )
+				include( "autorun/LMapvote/" .. folder .. "/" .. value )
 			else
-				include( "autorun/LMapvote/" .. folder .. "/" .. v )
+				include( "autorun/LMapvote/" .. folder .. "/" .. value )
 			end
-		elseif ( string.find( v, "cl_" ) ) then
+		elseif ( string.find( value, "cl_" ) ) then
 			if ( SERVER ) then
-				AddCSLuaFile( "autorun/LMapvote/" .. folder .. "/" .. v )
+				AddCSLuaFile( "autorun/LMapvote/" .. folder .. "/" .. value )
 			else
-				include( "autorun/LMapvote/" .. folder .. "/" .. v )
+				include( "autorun/LMapvote/" .. folder .. "/" .. value )
 			end
 		end
-		
-		LMapvote.kernel.Print( LMapvote.rgb.Violet, "Loaded lua file : " .. v )
 	end
 end
 
+LMapvote.kernel.Include( "sh_config.lua" )
 LMapvote.kernel.IncludeFolder( "libs" )
 LMapvote.kernel.IncludeFolder( "system" )
 LMapvote.kernel.IncludeFolder( "cl" )
 LMapvote.kernel.IncludeFolder( "vgui" )
+
+LMapvote.kernel.Print( LMapvote.rgb.Green, "LMAPVote loaded, Version - " .. LMapvote.config.Version )

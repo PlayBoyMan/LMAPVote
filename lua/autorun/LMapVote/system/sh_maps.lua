@@ -17,7 +17,6 @@ LMapvote.map.Register( "gm_construct", "" )
 LMapvote.map.Register( "gm_flatgrass", "" )
 
 function LMapvote.map.GetDataByName( mapname )
-
 	for key, value in pairs( LMapvote.map.buffer ) do
 		if ( value.Name == mapname ) then
 			return value
@@ -27,5 +26,4 @@ function LMapvote.map.GetDataByName( mapname )
 			end
 		end
 	end
-
 end

@@ -170,7 +170,7 @@ if ( SERVER ) then
 
 	function LMapvote.system.vote.Start( )
 		if ( LMapvote.system.vote.GetStatus( ) == true ) then
-			return
+			return "Vote has currently progressing."
 		end
 
 		if ( !LMapvote.system.vote.coreTable ) then
@@ -249,9 +249,9 @@ if ( SERVER ) then
 
 				local player_Count = 0
 				
-				for k, v in pairs( player.GetAll( ) ) do
-					if ( IsValid( v ) ) then
-						if ( !v:IsBot( ) ) then
+				for _, ent in pairs( player.GetAll( ) ) do
+					if ( IsValid( ent ) ) then
+						if ( !ent:IsBot( ) ) then
 							player_Count = player_Count + 1
 						end
 					end
@@ -261,11 +261,15 @@ if ( SERVER ) then
 					SetGlobalInt( "LMapvote.system.vote.Timer", 60 )
 					LMapvote.system.vote.SetStatus( false )
 					for _, ent in pairs( player.GetAll( ) ) do
-						netstream.Start(
-							ent, 
-							"LMapvote.system.vote.StopCall",
-							1
-						)
+						if ( IsValid( ent ) ) then
+							if ( !ent:IsBot( ) ) then
+								netstream.Start(
+									ent, 
+									"LMapvote.system.vote.StopCall",
+									1
+								)
+							end
+						end
 					end
 					RunConsoleCommand( "changelevel", wonMap )
 				end
@@ -275,20 +279,22 @@ if ( SERVER ) then
 				SetGlobalInt( "LMapvote.system.vote.Timer", GetGlobalInt( "LMapvote.system.vote.Timer" ) - 1 )
 			end
 		end )
+		
+		return nil
 	end
 	
 	function LMapvote.system.vote.GetWinnerMap( )
 		if ( LMapvote.system.vote.GetStatus( ) == false ) then
-			return { count = 0, map = game.GetMap() }
+			return { count = 0, map = game.GetMap( ) }
 		end
 		if ( !LMapvote.system.vote.coreTable ) then
-			return { count = 0, map = game.GetMap() }
+			return { count = 0, map = game.GetMap( ) }
 		end
 		
 		local buffer = { }
 		
-		for k, v in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-			buffer[ #buffer + 1 ] = { map = k, count = v.Count }
+		for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
+			buffer[ #buffer + 1 ] = { map = key, count = value.Count }
 		end
 		
 		local notzero = false
@@ -297,7 +303,7 @@ if ( SERVER ) then
 			if ( buffer[ i ].count == 0 ) then
 				if ( i == #buffer ) then
 					if ( !notzero ) then
-						return { count = 0, map = game.GetMap() }
+						return { count = 0, map = game.GetMap( ) }
 					end
 				end
 			else
@@ -313,6 +319,10 @@ if ( SERVER ) then
 	end
 
 	function LMapvote.system.vote.Stop( )
+		if ( LMapvote.system.vote.GetStatus( ) == false ) then
+			return "Vote has not currently progressing." 
+		end
+		
 		if ( timer.Exists( "LMapvote.system.vote.Timer" ) ) then
 			timer.Destroy( "LMapvote.system.vote.Timer" )	
 		end
@@ -330,6 +340,8 @@ if ( SERVER ) then
 				1
 			)
 		end
+		
+		return nil
 	end
 
 	hook.Add( "PlayerInitialSpawn", "LMapvote.system.vote.PlayerInitialSpawn", function( pl )
@@ -345,25 +357,39 @@ if ( SERVER ) then
 
 	concommand.Add( "LMapVote_vote_start", function( pl )
 		if ( IsValid( pl ) ) then
-			if ( pl:IsSuperAdmin( ) ) then
-				LMapvote.system.vote.Start( )
+			if ( LMapvote.config.HavePermission( pl ) ) then
+				local run = LMapvote.system.vote.Start( )
+				if ( run ) then
+					pl:ChatPrint( run )
+				end
 			else
+				pl:ChatPrint( "You don't have permission to this command." )
 				return
 			end
 		else
-			LMapvote.system.vote.Start( )
+			local run = LMapvote.system.vote.Start( )
+			if ( run ) then
+				LMapvote.kernel.Print( LMapvote.rgb.Red, run )
+			end
 		end
 	end )
 	
 	concommand.Add( "LMapVote_vote_stop", function( pl )
 		if ( IsValid( pl ) ) then
-			if ( pl:IsSuperAdmin( ) ) then
-				LMapvote.system.vote.Stop( )
+			if ( LMapvote.config.HavePermission( pl ) ) then
+				local run = LMapvote.system.vote.Stop( )
+				if ( run ) then
+					pl:ChatPrint( run )
+				end
 			else
+				pl:ChatPrint( "You don't have permission to this command." )
 				return
 			end
 		else
-			LMapvote.system.vote.Stop( )
+			local run = LMapvote.system.vote.Stop( )
+			if ( run ) then
+				LMapvote.kernel.Print( LMapvote.rgb.Red, run )
+			end
 		end
 	end )
 	
@@ -411,7 +437,7 @@ elseif ( CLIENT ) then
 			votePanel = vgui.Create( "LMapVote_VOTE" )
 		else
 			if ( votePanel.Frame ) then
-				votePanel.Frame:Remove()
+				votePanel.Frame:Remove( )
 				votePanel.Frame = nil
 			end
 			votePanel = vgui.Create( "LMapVote_VOTE" )
@@ -421,7 +447,7 @@ elseif ( CLIENT ) then
 	netstream.Hook( "LMapvote.system.vote.StopCall", function( )
 		if ( votePanel ) then
 			if ( votePanel.Frame ) then
-				votePanel.Frame:Remove()
+				votePanel.Frame:Remove( )
 				votePanel.Frame = nil
 			end
 		end

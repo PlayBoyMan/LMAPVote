@@ -13,27 +13,27 @@
 --]]
 function LMapvote.GeneratePolyBarTII( x, y, width, height, mod )
 	mod = mod or 15
-	Poly = {}
+	Poly = { }
 
-	Poly[1] = {}
+	Poly[1] = { }
 	Poly[1]["x"] = x
 	Poly[1]["y"] = y
 	Poly[1]["u"] = 1
 	Poly[1]["v"] = 1
 
-	Poly[2] = {}
+	Poly[2] = { }
 	Poly[2]["x"] = x+width+mod
 	Poly[2]["y"] = y
 	Poly[2]["u"] = 1
 	Poly[2]["v"] = 1
 
-	Poly[3] = {}
+	Poly[3] = { }
 	Poly[3]["x"] = x+width
 	Poly[3]["y"] = y+height
 	Poly[3]["u"] = 1
 	Poly[3]["v"] = 1
 
-	Poly[4] = {}
+	Poly[4] = { }
 	Poly[4]["x"] = x+mod
 	Poly[4]["y"] = y+height
 	Poly[4]["u"] = 1
@@ -131,7 +131,7 @@ function LMapvote.DrawCircle(originX,originY,radius,thick,startAng,distAng,iter)
                 end
         else
                 if distAng > 0 then
-                        local points = {}
+                        local points = { }
                         
                         if math.abs(distAng) < 360 then
                                 points[1] = {
@@ -156,7 +156,7 @@ function LMapvote.DrawCircle(originX,originY,radius,thick,startAng,distAng,iter)
                         
                         surface.DrawPoly(points)
                 else
-                        local points = {}
+                        local points = { }
                         
                         if math.abs(distAng) < 360 then
                                 points[1] = {
@@ -196,7 +196,7 @@ function VOTEPANEL:Init( )
 	self.Type = 1
 	
 	if ( self.Frame ) then
-		self.Frame:Remove()
+		self.Frame:Remove( )
 		self.Frame = nil
 	end
 	
@@ -209,8 +209,8 @@ function VOTEPANEL:Init( )
 	
 	self.percent_count = 0
 	
-	for k, v in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-		if ( #v.Voter != 0 ) then
+	for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
+		if ( #value.Voter != 0 ) then
 			self.percent_count = self.percent_count + 1
 		end
 	end
@@ -337,8 +337,8 @@ function VOTEPANEL:Init( )
 	self.ChatRun:SetText( "Send" )
 	self.ChatRun:SetColor( Color( 0, 0, 0, 255 ) )
 	self.ChatRun.DoClick = function( )
-		if ( string.len( self.ChatEntry:GetValue() ) > 0 ) then
-			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__CHATONLY, self.ChatEntry:GetValue() )
+		if ( string.len( self.ChatEntry:GetValue( ) ) > 0 ) then
+			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__CHATONLY, self.ChatEntry:GetValue( ) )
 			self.ChatEntry:SetText( "" )
 			self.ChatEntry:RequestFocus( )
 		else
@@ -363,8 +363,8 @@ function VOTEPANEL:Init( )
 	end
 	
 	self.ChatEntry.OnEnter = function( )
-		if ( string.len( self.ChatEntry:GetValue() ) > 0 ) then
-			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__CHATONLY, self.ChatEntry:GetValue() )
+		if ( string.len( self.ChatEntry:GetValue( ) ) > 0 ) then
+			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__CHATONLY, self.ChatEntry:GetValue( ) )
 			self.ChatEntry:SetText( "" )
 			self.ChatEntry:RequestFocus( )
 		else
@@ -381,9 +381,9 @@ end
 function VOTEPANEL:Result_Send( )
 	surface.PlaySound( "buttons/button1.wav" )
 	self.Type = 2
-	timer.Simple( 5, function()
+	timer.Simple( 5, function( )
 		self:Result_Receive( )
-	end)
+	end )
 end
 
 function VOTEPANEL:Result_Receive( )
@@ -391,11 +391,11 @@ function VOTEPANEL:Result_Receive( )
 end
 
 function VOTEPANEL:Refresh_Progress( keycode )
-	self.LeftMenu:Clear()
+	self.LeftMenu:Clear( )
 	local buffer = { }
 		
-	for k, v in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-		buffer[ #buffer + 1 ] = { Voter = v.Voter, Map = k, Count = v.Count }
+	for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
+		buffer[ #buffer + 1 ] = { Voter = value.Voter, Map = key, Count = value.Count }
 	end
 		
 	table.sort( buffer, function( a, b )
@@ -412,7 +412,7 @@ function VOTEPANEL:Refresh_Progress( keycode )
 	
 	for key, value in pairs( buffer ) do
 		progressPanel = vgui.Create( "DPanel" )
-		progressPanel:SetSize( self.LeftMenu:GetWide(), 100 )
+		progressPanel:SetSize( self.LeftMenu:GetWide( ), 100 )
 		progressPanel.Paint = function( pnl, w, h )
 
 			draw.RoundedBox( 0, 5, h / 2 - 90 / 2, 90, 90, Color( 0, 0, 0, 100 ) )
@@ -437,12 +437,12 @@ function VOTEPANEL:Refresh_Progress( keycode )
 				draw.SimpleText( "1st", "LMapVote_font_02", 15, 15, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			end
 			draw.SimpleText( value.Map, "LMapVote_font_02", 15 + 90, 15, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( value.Count .. " players voted", "LMapVote_font_03", self.LeftMenu:GetWide() - 15, 15, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( value.Count .. " players voted", "LMapVote_font_03", self.LeftMenu:GetWide( ) - 15, 15, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		end
 				
 		progressPanel.players = vgui.Create( "DPanelList", progressPanel )
 		progressPanel.players:SetPos( 15 + 90, 40 )
-		progressPanel.players:SetSize( progressPanel:GetWide() - ( 30 + 90 ), 50 )
+		progressPanel.players:SetSize( progressPanel:GetWide( ) - ( 30 + 90 ), 50 )
 		progressPanel.players:SetSpacing( 10 )
 		progressPanel.players:EnableHorizontal( true )
 		progressPanel.players:EnableVerticalScrollbar( true )		
@@ -471,7 +471,7 @@ function VOTEPANEL:Refresh_Progress( keycode )
 end
 
 function VOTEPANEL:Refresh_MapList( )
-	self.CenterMenu:Clear()
+	self.CenterMenu:Clear( )
 	for key, value in pairs( LMapvote.system.vote.coreTable[ "MapList" ] ) do
 		local map = vgui.Create( "DButton" )
 		map:SetText( "" )
@@ -493,13 +493,13 @@ function VOTEPANEL:Refresh_MapList( )
 			draw.SimpleText( value.Name, "LMapVote_font_02", w / 2, h - ( 30 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 		map.DoClick = function( )
-			LMapvote.system.vote.Vote( LocalPlayer(), value.Name )
+			LMapvote.system.vote.Vote( LocalPlayer( ), value.Name )
 			
 			
 			timer.Simple( 0.3, function( )
 				self.percent_count = 0
-				for k, v in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-					if ( #v.Voter != 0 ) then
+				for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
+					if ( #value.Voter != 0 ) then
 						self.percent_count = self.percent_count + 1
 					end
 				end
@@ -516,42 +516,42 @@ function VOTEPANEL:Refresh_Chat( keys )
 		for key, value in pairs( LMapvote.system.vote.coreTable[ "Chat" ] ) do
 			if ( key == #LMapvote.system.vote.coreTable[ "Chat" ] ) then
 				local chats = vgui.Create( "DPanel" )
-				chats:SetSize( self.Chat:GetWide(), 20 )
+				chats:SetSize( self.Chat:GetWide( ), 20 )
 				chats.Paint = function( pnl, w, h )
-					draw.SimpleText( value.caller:Name() .. " : " .. value.text, "LMapVote_font_04", 25, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+					draw.SimpleText( value.caller:Name( ) .. " : " .. value.text, "LMapVote_font_04", 25, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 				end
 				
 				local avatar = vgui.Create( "AvatarImage", chats )
 				avatar:SetPos( 0, 0 )
 				avatar:SetSize( 20, 20 )
-				avatar:SetPlayer( LMapvote.kernel.FindPlayerByName( value.caller:Name() ), 64 )
+				avatar:SetPlayer( LMapvote.kernel.FindPlayerByName( value.caller:Name( ) ), 64 )
 				
 				self.Chat:AddItem( chats )
-				timer.Simple( 0.1, function()
+				timer.Simple( 0.1, function( )
 					self.Chat.VBar:SetScroll( #LMapvote.system.vote.coreTable[ "Chat" ] * 50 )
-				end)
+				end )
 			end
 		end
 	else
-		self.Chat:Clear()
+		self.Chat:Clear( )
 		for key, value in pairs( LMapvote.system.vote.coreTable[ "Chat" ] ) do
 			local chats = vgui.Create( "DPanel" )
-			chats:SetSize( self.Chat:GetWide(), 20 )
+			chats:SetSize( self.Chat:GetWide( ), 20 )
 			chats.Paint = function( pnl, w, h )
-				draw.SimpleText( value.caller:Name() .. " : " .. value.text, "LMapVote_font_04", 25, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+				draw.SimpleText( value.caller:Name( ) .. " : " .. value.text, "LMapVote_font_04", 25, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			end
 				
 			local avatar = vgui.Create( "AvatarImage", chats )
 			avatar:SetPos( 0, 0 )
 			avatar:SetSize( 20, 20 )
-			avatar:SetPlayer( LMapvote.kernel.FindPlayerByName( value.caller:Name() ), 64 )
+			avatar:SetPlayer( LMapvote.kernel.FindPlayerByName( value.caller:Name( ) ), 64 )
 				
 			self.Chat:AddItem( chats )
 			
 			if ( key == #LMapvote.system.vote.coreTable[ "Chat" ] ) then
-				timer.Simple( 0.3, function()
+				timer.Simple( 0.3, function( )
 					self.Chat.VBar:SetScroll( #LMapvote.system.vote.coreTable[ "Chat" ] * 50 )
-				end)
+				end )
 			end
 		end
 	end
