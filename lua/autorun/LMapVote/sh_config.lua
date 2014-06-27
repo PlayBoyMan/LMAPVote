@@ -5,9 +5,14 @@
 
 LMapvote.config = LMapvote.config or { }
 
+LMapvote.config.Version = "0.5a" -- Do not edit this .. please .. ;>
 
-LMapvote.config.Version = "0.5a"
-
+--[[
+	How can i change command and other permission?
+	
+	Yes here you are ;)
+	Link : https://github.com/L7D/LMAPVote/wiki/How-can-i-change-command-and-other-permission%3F
+--]]
 LMapvote.config.HavePermission = function( pl )
 	if ( pl:IsSuperAdmin( ) ) then
 		return true
@@ -15,3 +20,4 @@ LMapvote.config.HavePermission = function( pl )
 		return false
 	end
 end
+

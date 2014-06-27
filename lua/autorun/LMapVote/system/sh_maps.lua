@@ -12,9 +12,6 @@ function LMapvote.map.Register( mapname, mapimage )
 		Image = mapimage
 	}	
 end
-	
-LMapvote.map.Register( "gm_construct", "" )
-LMapvote.map.Register( "gm_flatgrass", "" )
 
 function LMapvote.map.GetDataByName( mapname )
 	for key, value in pairs( LMapvote.map.buffer ) do
@@ -25,5 +22,27 @@ function LMapvote.map.GetDataByName( mapname )
 				return nil
 			end
 		end
+	end
+end
+
+--[[ 
+	How can i register map?
+	
+	Yes here you are ;)
+	Link : https://github.com/L7D/LMAPVote/wiki/How-can-i-register-map%3F
+--]]
+
+
+LMapvote.map.Register( "gm_construct", "" )
+LMapvote.map.Register( "gm_flatgrass", "" )
+
+
+-- WARNING - Do not insert 'LMapvote.map.Register' codes bottom this. :p
+do
+	for i = 1, #LMapvote.map.buffer do
+		if ( !LMapvote.map.buffer[ i ].Image or LMapvote.map.buffer[ i ].Image == "" ) then
+			continue
+		end
+		resource.AddFile( "materials/" .. LMapvote.map.buffer[ i ].Image )
 	end
 end
