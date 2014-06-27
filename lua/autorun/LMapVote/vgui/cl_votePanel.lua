@@ -465,7 +465,7 @@ function VOTEPANEL:Refresh_Progress( keycode )
 			local avatar = vgui.Create( "AvatarImage", panel )
 			avatar:SetPos( 0, 0 )
 			avatar:SetSize( 50, 50 )
-			avatar:SetSteamID( LMapvote.kernel.FindPlayerByName( value2 ):SteamID64( ), 64 )
+			avatar:SetPlayer( LMapvote.kernel.FindPlayerByName( value2 ), 64 )
 					
 			progressPanel.players:AddItem( panel )
 		end
@@ -527,7 +527,7 @@ function VOTEPANEL:Refresh_Chat( keys )
 				local avatar = vgui.Create( "AvatarImage", chats )
 				avatar:SetPos( 0, 0 )
 				avatar:SetSize( 20, 20 )
-				avatar:SetSteamID( LMapvote.kernel.FindPlayerByName( value.caller:Name( ) ):SteamID64( ), 64 )
+				avatar:SetPlayer( LMapvote.kernel.FindPlayerByName( value.caller:Name( ) ), 64 )
 				
 				self.Chat:AddItem( chats )
 				timer.Simple( 0.1, function( )
@@ -547,7 +547,7 @@ function VOTEPANEL:Refresh_Chat( keys )
 			local avatar = vgui.Create( "AvatarImage", chats )
 			avatar:SetPos( 0, 0 )
 			avatar:SetSize( 20, 20 )
-			avatar:SetSteamID( LMapvote.kernel.FindPlayerByName( value.caller:Name( ) ):SteamID64( ), 64 )
+			avatar:SetPlayer( LMapvote.kernel.FindPlayerByName( value.caller:Name( ) ), 64 )
 				
 			self.Chat:AddItem( chats )
 			
