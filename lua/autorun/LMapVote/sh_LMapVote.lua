@@ -1,13 +1,11 @@
 --[[
-	LMAPVote - Development Version 0.5a
-		Copyright ( C ) 2014 ~ L7D
+	LMAPVote - 1.0
+	Copyright ( C ) 2014 ~ L7D
 --]]
 
 LMapvote = LMapvote or { }
 LMapvote.kernel = LMapvote.kernel or { }
 LMapvote.system = LMapvote.system or { }
-
-CreateConVar( "LMAPVote_VoteTime", 60, { FCVAR_NONE } ) // Set map vote time.
 
 LMapvote.rgb = {
 	Red = Color( 255, 0, 0 ),

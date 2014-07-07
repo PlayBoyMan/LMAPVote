@@ -1,7 +1,6 @@
 --[[
-	LMAPVote - Development Version 0.5a
-		Copyright ( C ) 2014 ~ L7D
+	LMAPVote - 1.0
+	Copyright ( C ) 2014 ~ L7D
 --]]
 
-resource.AddFile( "materials/LMAPVote/unknown.jpg" )
 resource.AddFile( "sound/LMAPVote/Enter.wav" )

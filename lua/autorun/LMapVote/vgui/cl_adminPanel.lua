@@ -1,6 +1,6 @@
 --[[
-	LMAPVote - Development Version 0.5a
-		Copyright ( C ) 2014 ~ L7D
+	LMAPVote - 1.0
+	Copyright ( C ) 2014 ~ L7D
 --]]
 
 concommand.Add( "LMAPVote_admin", function( pl )
@@ -478,7 +478,7 @@ function ADMINPANEL:Refresh_Maplist( )
 			
 			surface.SetDrawColor( 255, 255, 255, 255 )
 			if ( !value.Image or value.Image == "" ) then
-				surface.SetMaterial( Material( "LMAPVote/unknown.jpg" ) )
+				surface.SetMaterial( Material( "maps/thumb/" .. value.Name .. ".png" ) )
 			else
 				surface.SetMaterial( Material( value.Image ) )
 			end

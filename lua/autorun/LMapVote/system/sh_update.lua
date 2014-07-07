@@ -1,6 +1,6 @@
 --[[
-	LMAPVote - Development Version 0.5a
-		Copyright ( C ) 2014 ~ L7D
+	LMAPVote - 1.0
+	Copyright ( C ) 2014 ~ L7D
 --]]
 
 LMapvote.update = LMapvote.update or { }
@@ -39,8 +39,6 @@ function LMapvote.update.Check( )
 				SetGlobalBool( "LMapvote.update.Status", false )
 			end
 		)
-
-		
 	end
 		
 	if ( SERVER ) then

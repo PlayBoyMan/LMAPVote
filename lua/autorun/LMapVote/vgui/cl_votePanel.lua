@@ -1,6 +1,6 @@
 --[[
-	LMAPVote - Development Version 0.5a
-		Copyright ( C ) 2014 ~ L7D
+	LMAPVote - 1.0
+	Copyright ( C ) 2014 ~ L7D
 --]]
 
 
@@ -224,7 +224,7 @@ function VOTEPANEL:Init( )
 	self.Frame:Center( )
 	self.Frame.Paint = function( pnl, w, h )
 		percent = self.percent_count / #player.GetAll( )
-		timePercent = GetGlobalInt( "LMapvote.system.vote.Timer" ) / tonumber( GetConVarString( "LMAPVote_VoteTime" ) )
+		timePercent = GetGlobalInt( "LMapvote.system.vote.Timer" ) / tonumber( LMapvote.config.VoteTime )
 		
 		timePercentBoxAni = Lerp( 0.05, timePercentBoxAni, timePercent * ( w * 0.6 ) )
 		
@@ -284,7 +284,7 @@ function VOTEPANEL:Init( )
 					
 					surface.SetDrawColor( 255, 255, 255, 255 )
 					if ( !data.Image or data.Image == "" ) then
-						surface.SetMaterial( Material( "LMAPVote/unknown.jpg" ) )
+						surface.SetMaterial( Material( "maps/thumb/" .. data.Name .. ".png" ) )
 					else
 						surface.SetMaterial( Material( data.Image ) )
 					end
@@ -302,7 +302,7 @@ function VOTEPANEL:Init( )
 
 	self.LeftMenu = vgui.Create( "DPanelList", self.Frame )
 	self.LeftMenu:SetPos( 15, 50 )
-	self.LeftMenu:SetSize( self.w * 0.3 - 15, self.h * 0.5 )
+	self.LeftMenu:SetSize( self.w * 0.5 - 15, self.h * 0.5 )
 	self.LeftMenu:SetSpacing( 10 )
 	self.LeftMenu:EnableHorizontal( false )
 	self.LeftMenu:EnableVerticalScrollbar( true )		
@@ -311,8 +311,8 @@ function VOTEPANEL:Init( )
 	end
 	
 	self.CenterMenu = vgui.Create( "DPanelList", self.Frame )
-	self.CenterMenu:SetPos( self.w * 0.3 + 15, 50 )
-	self.CenterMenu:SetSize( self.w - ( self.w * 0.3 + 30 ), self.h * 0.5 )
+	self.CenterMenu:SetPos( self.w * 0.5 + 15, 50 )
+	self.CenterMenu:SetSize( self.w - ( self.w * 0.5 + 30 ), self.h * 0.5 )
 	self.CenterMenu:SetSpacing( 10 )
 	self.CenterMenu:EnableHorizontal( true )
 	self.CenterMenu:EnableVerticalScrollbar( true )		
@@ -423,7 +423,7 @@ function VOTEPANEL:Refresh_Progress( keycode )
 			
 			surface.SetDrawColor( 255, 255, 255, 255 )
 			if ( !LMapvote.map.GetDataByName( value.Map ).Image or LMapvote.map.GetDataByName( value.Map ).Image == "" ) then
-				surface.SetMaterial( Material( "LMAPVote/unknown.jpg" ) )
+				surface.SetMaterial( Material( "maps/thumb/" .. value.Map .. ".png" ) )
 			else
 				surface.SetMaterial( Material( LMapvote.map.GetDataByName( value.Map ).Image ) )
 			end
@@ -431,10 +431,8 @@ function VOTEPANEL:Refresh_Progress( keycode )
 			
 			if ( key == 1 ) then
 				draw.RoundedBox( 0, 0, 0, w, 30, Color( 255, 255, 255, 100 ) )
-				
 			end
-			
-			
+
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 10 ) )
 			
 			if ( key == 1 ) then
@@ -447,27 +445,21 @@ function VOTEPANEL:Refresh_Progress( keycode )
 		progressPanel.players = vgui.Create( "DPanelList", progressPanel )
 		progressPanel.players:SetPos( 15 + 90, 40 )
 		progressPanel.players:SetSize( progressPanel:GetWide( ) - ( 30 + 90 ), 50 )
-		progressPanel.players:SetSpacing( 10 )
+		progressPanel.players:SetSpacing( 2 )
 		progressPanel.players:EnableHorizontal( true )
 		progressPanel.players:EnableVerticalScrollbar( false )		
 		progressPanel.players.Paint = function( pnl, w, h )
-			draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 15 ) )
+			draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 10 ) )
 		end
 				
 		for key2, value2 in pairs( value.Voter ) do
-				
-			local panel = vgui.Create( "DPanel", progressPanel.players )
-			panel:SetSize( 50, 50 )
-			panel.Paint = function( pnl, w, h )
-
-			end
-					
-			local avatar = vgui.Create( "AvatarImage", panel )
+			local avatar = vgui.Create( "AvatarImage" )
 			avatar:SetPos( 0, 0 )
-			avatar:SetSize( 50, 50 )
+			avatar:SetSize( 30, 30 )
 			avatar:SetPlayer( LMapvote.kernel.FindPlayerByName( value2 ), 64 )
+			avatar:SetToolTip( value2 )
 					
-			progressPanel.players:AddItem( panel )
+			progressPanel.players:AddItem( avatar )
 		end
 	
 		self.LeftMenu:AddItem( progressPanel )
@@ -486,15 +478,15 @@ function VOTEPANEL:Refresh_MapList( )
 			
 			surface.SetDrawColor( 255, 255, 255, 255 )
 			if ( !value.Image or value.Image == "" ) then
-				surface.SetMaterial( Material( "LMAPVote/unknown.jpg" ) )
+				surface.SetMaterial( Material( "maps/thumb/" .. value.Name .. ".png" ) )
 			else
 				surface.SetMaterial( Material( value.Image ) )
 			end
 			surface.DrawTexturedRect( 0, 0, w, h )
 
-			draw.RoundedBox( 0, 0, h - 30, w, 30, Color( 255, 255, 255, 100 ) )			
+			draw.RoundedBox( 0, 0, h - 30, w, 30, Color( 0, 0, 0, 100 ) )			
 			
-			draw.SimpleText( value.Name, "LMapVote_font_02", w / 2, h - ( 30 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.SimpleText( value.Name, "LMapVote_font_02", w / 2, h - ( 30 / 2 ), Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 		map.DoClick = function( )
 			LMapvote.PlayButtonSound( )
