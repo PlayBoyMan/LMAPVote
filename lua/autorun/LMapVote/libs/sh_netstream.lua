@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.0
+	LMAPVote - 1.1
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -30,7 +30,7 @@
 
 if (!von) then
 	AddCSLuaFile( "sh_von.lua" )
-	include("sh_von.lua")
+	include( "sh_von.lua" )
 end
 
 local type, error, pcall, pairs, AddCSLuaFile, require, _player = type, error, pcall, pairs, AddCSLuaFile, require, player

@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.0
+	LMAPVote - 1.1
 	Copyright ( C ) 2014 ~ L7D
 --]]
 

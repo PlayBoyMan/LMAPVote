@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.0
+	LMAPVote - 1.1
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -243,10 +243,10 @@ function ADMINPANEL:Init( )
 			surface.SetDrawColor( 0, 0, 0, 255 )
 		else
 			surface.SetDrawColor( 255, 0, 0, 255 )
-			LMapvote.DrawCircle( 30, h / 2, 8, 2, 90, 360, 100 )
+			LMapvote.geometry.DrawCircle( 30, h / 2, 8, 2, 90, 360, 100 )
 			return
 		end
-		LMapvote.DrawCircle( 30, h / 2, 8, 2, 90, self.Frame.Panel01.CheckUpdate.Rotate, 100 )
+		LMapvote.geometry.DrawCircle( 30, h / 2, 8, 2, 90, self.Frame.Panel01.CheckUpdate.Rotate, 100 )
 	end
 	
 	self.Frame.Panel01.UpdateLink = vgui.Create( "DButton", self.Frame.Panel01 )
@@ -466,6 +466,24 @@ function ADMINPANEL:Refresh_Maplist( )
 	end
 	self.Frame.Panel02.MaplistMenu:Clear( )
 	
+	local imageTable = { }
+	
+	for key, value in pairs( LMapvote.map.buffer ) do
+		if ( !value.Image or value.Image == "" ) then
+			if ( file.Exists( "maps/thumb/" .. value.Name .. ".png", "GAME" ) ) then
+				imageTable[ value.Name ] = 1
+			else
+				imageTable[ value.Name ] = 0
+			end
+		else
+			if ( file.Exists( "materials/" .. value.Image, "GAME" ) ) then
+				imageTable[ value.Name ] = 2
+			else
+				imageTable[ value.Name ] = 0
+			end
+		end
+	end
+	
 	for key, value in pairs( LMapvote.map.buffer ) do
 		local delata = 0
 		local panel = vgui.Create( "DPanel" )
@@ -476,17 +494,22 @@ function ADMINPANEL:Refresh_Maplist( )
 		panel.Paint = function( pnl, w, h )
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 100 ) )
 			
-			surface.SetDrawColor( 255, 255, 255, 255 )
-			if ( !value.Image or value.Image == "" ) then
-				surface.SetMaterial( Material( "maps/thumb/" .. value.Name .. ".png" ) )
-			else
-				surface.SetMaterial( Material( value.Image ) )
+			if ( imageTable[ value.Name ] ) then
+				if ( imageTable[ value.Name ] == 1 ) then
+					surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial( Material( "maps/thumb/" .. value.Name .. ".png" ) )
+					surface.DrawTexturedRect( 0, 0, w, h )				
+				elseif ( imageTable[ value.Name ] == 2 ) then
+					surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial( Material( value.Image ) )
+					surface.DrawTexturedRect( 0, 0, w, h )			
+				elseif ( imageTable[ value.Name ] == 0 ) then
+					draw.SimpleText( "No map icon :/", "LMapVote_font_04", w / 2, h / 2 - ( 20 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				end
 			end
-			surface.DrawTexturedRect( 0, 0, w, h )
 
-			draw.RoundedBox( 0, 0, h - 20, w, 20, Color( 255, 255, 255, 100 ) )			
-			
-			draw.SimpleText( value.Name, "LMapVote_font_04", w / 2, h - ( 20 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.RoundedBox( 0, 0, h - 20, w, 20, Color( 0, 0, 0, 100 ) )
+			draw.SimpleText( value.Name, "LMapVote_font_04", w / 2, h - ( 20 / 2 ), Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 		
 		self.Frame.Panel02.MaplistMenu:AddItem( panel )

@@ -1,188 +1,7 @@
 --[[
-	LMAPVote - 1.0
+	LMAPVote - 1.1
 	Copyright ( C ) 2014 ~ L7D
 --]]
-
-
---[[
-	- LMapvote.GeneratePolyBarTII(x,y, width, height, mod) function source -
-	https://github.com/BlackVoid/deathrun/blob/master/gamemode/vgui/polygenerator.lua
-	
-	Author : https://github.com/BlackVoid
-	Thanks 'BlackVoid', i like you.
---]]
-function LMapvote.GeneratePolyBarTII( x, y, width, height, mod )
-	mod = mod or 15
-	Poly = { }
-
-	Poly[1] = { }
-	Poly[1]["x"] = x
-	Poly[1]["y"] = y
-	Poly[1]["u"] = 1
-	Poly[1]["v"] = 1
-
-	Poly[2] = { }
-	Poly[2]["x"] = x+width+mod
-	Poly[2]["y"] = y
-	Poly[2]["u"] = 1
-	Poly[2]["v"] = 1
-
-	Poly[3] = { }
-	Poly[3]["x"] = x+width
-	Poly[3]["y"] = y+height
-	Poly[3]["u"] = 1
-	Poly[3]["v"] = 1
-
-	Poly[4] = { }
-	Poly[4]["x"] = x+mod
-	Poly[4]["y"] = y+height
-	Poly[4]["u"] = 1
-	Poly[4]["v"] = 1
-
-	return Poly
-end
-
---[[
-	- LMapvote.DrawCircle(originX,originY,radius,thick,startAng,distAng,iter) function source -
-	: Night-Eagle's circle drawing library
-	: 1.1
-	: https://code.google.com/p/wintersurvival/source/browse/trunk/gamemode/cl_circle.lua?r=154
---]]
-function LMapvote.DrawCircle(originX,originY,radius,thick,startAng,distAng,iter)
-        startAng = math.rad(startAng)
-        distAng = math.rad(distAng)
-        if (not iter) or iter <= 1 then
-                iter = 8
-        else
-                iter = math.Round(iter)
-        end
-        
-        local stepAng = math.abs(distAng)/iter
-        
-        if thick then //The circle is hollow (Outline)
-                if distAng > 0 then
-                        for i = 0, iter-1 do
-                                local eradius = radius + thick
-                                local cur1 = stepAng*i+startAng
-                                local cur2 = cur1+stepAng
-                                local points = {
-                                        {
-                                                x=math.cos(cur2)*radius+originX,
-                                                y=-math.sin(cur2)*radius+originY,
-                                                u=0,
-                                                v=0,
-                                        },
-                                        {
-                                                x=math.cos(cur2)*eradius+originX,
-                                                y=-math.sin(cur2)*eradius+originY,
-                                                u=1,
-                                                v=0,
-                                        },
-                                        {
-                                                x=math.cos(cur1)*eradius+originX,
-                                                y=-math.sin(cur1)*eradius+originY,
-                                                u=1,
-                                                v=1,
-                                        },
-                                        {
-                                                x=math.cos(cur1)*radius+originX,
-                                                y=-math.sin(cur1)*radius+originY,
-                                                u=0,
-                                                v=1,
-                                        },
-                                }
-                                
-                                surface.DrawPoly(points)
-                        end
-                else
-                        for i = 0, iter-1 do
-                                local eradius = radius + thick
-                                local cur1 = stepAng*i+startAng
-                                local cur2 = cur1+stepAng
-                                local points = {
-                                        {
-                                                x=math.cos(cur1)*radius+originX,
-                                                y=math.sin(cur1)*radius+originY,
-                                                u=0,
-                                                v=0,
-                                        },
-                                        {
-                                                x=math.cos(cur1)*eradius+originX,
-                                                y=math.sin(cur1)*eradius+originY,
-                                                u=1,
-                                                v=0,
-                                        },
-                                        {
-                                                x=math.cos(cur2)*eradius+originX,
-                                                y=math.sin(cur2)*eradius+originY,
-                                                u=1,
-                                                v=1,
-                                        },
-                                        {
-                                                x=math.cos(cur2)*radius+originX,
-                                                y=math.sin(cur2)*radius+originY,
-                                                u=0,
-                                                v=1,
-                                        },
-                                }
-                                
-                                surface.DrawPoly(points)
-                        end
-                end
-        else
-                if distAng > 0 then
-                        local points = { }
-                        
-                        if math.abs(distAng) < 360 then
-                                points[1] = {
-                                        x = originX,
-                                        y = originY,
-                                        u = .5,
-                                        v = .5,
-                                }
-                                iter = iter + 1
-                        end
-                        
-                        for i = iter-1,0,-1 do
-                                local cur1 = stepAng*i+startAng
-                                local cur2 = cur1+stepAng
-                                table.insert(points,{
-                                        x=math.cos(cur1)*radius+originX,
-                                        y=-math.sin(cur1)*radius+originY,
-                                        u=(1+math.cos(cur1))/2,
-                                        v=(1+math.sin(-cur1))/2,
-                                })
-                        end
-                        
-                        surface.DrawPoly(points)
-                else
-                        local points = { }
-                        
-                        if math.abs(distAng) < 360 then
-                                points[1] = {
-                                        x = originX,
-                                        y = originY,
-                                        u = .5,
-                                        v = .5,
-                                }
-                                iter = iter + 1
-                        end
-                        
-                        for i = 0,iter-1 do
-                                local cur1 = stepAng*i+startAng
-                                local cur2 = cur1+stepAng
-                                table.insert(points,{
-                                        x=math.cos(cur1)*radius+originX,
-                                        y=math.sin(cur1)*radius+originY,
-                                        u=(1+math.cos(cur1))/2,
-                                        v=(1+math.sin(cur1))/2,
-                                })
-                        end
-                        
-                        surface.DrawPoly(points)
-                end
-        end
-end
 
 local VOTEPANEL = { }
 
@@ -194,6 +13,8 @@ function VOTEPANEL:Init( )
 
 	self.ProgressTab = { }
 	self.Type = 1
+	self.imageTable = { }
+	self.imageTablebuffer = { }
 	
 	if ( self.Frame ) then
 		self.Frame:Remove( )
@@ -215,6 +36,26 @@ function VOTEPANEL:Init( )
 		end
 	end
 	
+	for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
+		self.imageTablebuffer[ #self.imageTablebuffer + 1 ] = { Voter = value.Voter, Map = key, Count = value.Count }
+	end
+
+	for key, value in pairs( self.imageTablebuffer ) do
+		if ( !LMapvote.map.GetDataByName( value.Map ).Image or LMapvote.map.GetDataByName( value.Map ).Image == "" ) then
+			if ( file.Exists( "maps/thumb/" .. value.Map .. ".png", "GAME" ) ) then
+				self.imageTable[ value.Map ] = 1
+			else
+				self.imageTable[ value.Map ] = 0
+			end
+		else
+			if ( file.Exists( "materials/" .. LMapvote.map.GetDataByName( value.Map ).Image, "GAME" ) ) then
+				self.imageTable[ value.Map ] = 2
+			else
+				self.imageTable[ value.Map ] = 0
+			end
+		end
+	end
+	
 	self.Frame = vgui.Create( "DFrame" )
 	self.Frame:SetSize( self.w, self.h )
 	self.Frame:SetPos( self.x, self.y )
@@ -232,12 +73,16 @@ function VOTEPANEL:Init( )
 		percentBoxAni = Lerp( 0.03, percentBoxAni, percent * 360 )
 		
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 255, 255, 235 ) )
+		
+		draw.SimpleText( "LMAPVote", "LMapVote_font_01", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMapVote_font_05", 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMapVote_font_05", 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 
 		if ( self.Type == 1 ) then
 			draw.RoundedBox( 0, 15, h * 0.5 + 65, w * 0.2 - 15, h * 0.35, Color( 10, 10, 10, 8 ) )
 			
-			local timer01 = LMapvote.GeneratePolyBarTII( w * 0.2, 20, w * 0.6, 10 )
-			local timer02 = LMapvote.GeneratePolyBarTII( w * 0.2, 20, timePercentBoxAni, 10 )
+			local timer01 = LMapvote.geometry.GeneratePolyBarTII( w * 0.2, 20, w * 0.6, 10 )
+			local timer02 = LMapvote.geometry.GeneratePolyBarTII( w * 0.2, 20, timePercentBoxAni, 10 )
 
 			draw.NoTexture( )
 			surface.SetDrawColor( 10, 10, 10, 30 )			
@@ -249,18 +94,15 @@ function VOTEPANEL:Init( )
 			
 			draw.NoTexture( )
 			surface.SetDrawColor( 0, 0, 0, 255 )
-			LMapvote.DrawCircle( ( 15 + w * 0.2 - 15 ) / 2, ( h * 0.5 + 65 ) + ( h * 0.35 ) / 2, 80, 8, 90, percentBoxAni, 100)
+			LMapvote.geometry.DrawCircle( ( 15 + w * 0.2 - 15 ) / 2, ( h * 0.5 + 65 ) + ( h * 0.35 ) / 2, 80, 8, 90, percentBoxAni, 100)
 			
 			draw.NoTexture( )
 			surface.SetDrawColor( 0, 0, 0, 255 )
-			LMapvote.DrawCircle( ( 15 + w * 0.2 - 15 ) / 2, ( h * 0.5 + 65 ) + ( h * 0.35 ) / 2, 80, 2, 90, 360, 100)
+			LMapvote.geometry.DrawCircle( ( 15 + w * 0.2 - 15 ) / 2, ( h * 0.5 + 65 ) + ( h * 0.35 ) / 2, 80, 2, 90, 360, 100)
 
 			draw.SimpleText( "Vote Percent", "LMapVote_font_03", ( 15 + w * 0.2 - 15 ) / 2, ( h * 0.5 + 65 ) + ( h * 0.35 ) / 2 - 120, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			draw.SimpleText( math.Round( percentAni ) .. " %", "LMapVote_font_01", ( 15 + w * 0.2 - 15 ) / 2, ( h * 0.5 + 65 ) + ( h * 0.35 ) / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-			
-			draw.SimpleText( "LMAPVote", "LMapVote_font_01", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMapVote_font_05", 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMapVote_font_05", 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+
 			draw.SimpleText( GetGlobalInt( "LMapvote.system.vote.Timer" ), "LMapVote_font_03", w * 0.2 - 30, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		else
 			self.LeftMenu:SetVisible( false )
@@ -269,31 +111,33 @@ function VOTEPANEL:Init( )
 			self.ChatEntry:SetVisible( false )
 			self.ChatRun:SetVisible( false )
 			
-			draw.SimpleText( "LMAPVote", "LMapVote_font_01", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMapVote_font_05", 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMapVote_font_05", 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			
-			draw.SimpleText( "Vote Finished", "LMapVote_font_01", w / 2, 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.RoundedBox( 0, 0, 0, w, 50, Color( 0, 0, 0, 15 ) )
 
-			
+			draw.SimpleText( "Vote Result", "LMapVote_font_01", w / 2, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
 			if ( LMapvote.system.vote.result ) then
 				if ( LMapvote.system.vote.result.Won ) then
 					local data = LMapvote.map.GetDataByName( LMapvote.system.vote.result.Won )
 					
-					draw.RoundedBox( 0, w / 2 - 100 / 2, h * 0.4, 100, 100, Color( 0, 0, 0, 100 ) )
+					draw.RoundedBox( 0, w / 2 - ( w * 0.2 / 2 ), h * 0.4 - ( h * 0.2 / 2 ), w * 0.2, h * 0.2, Color( 0, 0, 0, 100 ) )
 					
-					surface.SetDrawColor( 255, 255, 255, 255 )
 					if ( !data.Image or data.Image == "" ) then
-						surface.SetMaterial( Material( "maps/thumb/" .. data.Name .. ".png" ) )
+						if ( file.Exists( "maps/thumb/" .. data.Name .. ".png", "GAME" ) ) then
+							surface.SetDrawColor( 255, 255, 255, 255 )
+							surface.SetMaterial( Material( "maps/thumb/" .. data.Name .. ".png" ) )
+							surface.DrawTexturedRect( w / 2 - ( w * 0.2 / 2 ), h * 0.4 - ( h * 0.2 / 2 ), w * 0.2, h * 0.2 )		
+						end
 					else
-						surface.SetMaterial( Material( data.Image ) )
+						if ( file.Exists( "materials/" .. data.Image, "GAME" ) ) then
+							surface.SetDrawColor( 255, 255, 255, 255 )
+							surface.SetMaterial( Material( data.Image ) )
+							surface.DrawTexturedRect( w / 2 - ( w * 0.2 / 2 ), h * 0.4 - ( h * 0.2 / 2 ), w * 0.2, h * 0.2 )
+						end
 					end
-					surface.DrawTexturedRect( w / 2 - 100 / 2, h * 0.4, 100, 100 )
 					
 					draw.SimpleText( data.Name, "LMapVote_font_01", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					if ( LMapvote.system.vote.result.Count ) then
-						
-						draw.SimpleText( LMapvote.system.vote.result.Count .. " players voted.", "LMapVote_font_03", w / 2, h * 0.6 + 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+						draw.SimpleText( LMapvote.system.vote.result.Count .. " players voted.", "LMapVote_font_03", w / 2, h * 0.6 + 50, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					end
 				end
 			end
@@ -303,7 +147,7 @@ function VOTEPANEL:Init( )
 	self.LeftMenu = vgui.Create( "DPanelList", self.Frame )
 	self.LeftMenu:SetPos( 15, 50 )
 	self.LeftMenu:SetSize( self.w * 0.5 - 15, self.h * 0.5 )
-	self.LeftMenu:SetSpacing( 10 )
+	self.LeftMenu:SetSpacing( 5 )
 	self.LeftMenu:EnableHorizontal( false )
 	self.LeftMenu:EnableVerticalScrollbar( true )		
 	self.LeftMenu.Paint = function( pnl, w, h )
@@ -396,8 +240,10 @@ end
 
 function VOTEPANEL:Refresh_Progress( keycode )
 	self.LeftMenu:Clear( )
+	
 	local buffer = { }
-		
+	local buffer2 = { }
+
 	for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
 		buffer[ #buffer + 1 ] = { Voter = value.Voter, Map = key, Count = value.Count }
 	end
@@ -405,20 +251,39 @@ function VOTEPANEL:Refresh_Progress( keycode )
 	table.sort( buffer, function( a, b )
 		return a.Count > b.Count
 	end )
-	
-	local buffer2 = { }
-	
+
 	for i = 1, #buffer do
 		buffer2[ buffer[ i ].Map ] = { Voter = buffer[ i ].Voter, Count = buffer[ i ].Count }
 	end
 		
 	LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] = buffer2
 	
+	--[[
+
+	for key, value in pairs( buffer ) do
+		if ( !LMapvote.map.GetDataByName( value.Map ).Image or LMapvote.map.GetDataByName( value.Map ).Image == "" ) then
+			if ( file.Exists( "maps/thumb/" .. value.Map .. ".png", "GAME" ) ) then
+				self.imageTable[ value.Map ] = 1
+			else
+				self.imageTable[ value.Map ] = 0
+			end
+		else
+			if ( file.Exists( "materials/" .. LMapvote.map.GetDataByName( value.Map ).Image, "GAME" ) ) then
+				self.imageTable[ value.Map ] = 2
+			else
+				self.imageTable[ value.Map ] = 0
+			end
+		end
+	end
+	
+	--]]
+	
 	for key, value in pairs( buffer ) do
 		progressPanel = vgui.Create( "DPanel" )
 		progressPanel:SetSize( self.LeftMenu:GetWide( ), 100 )
 		progressPanel.Paint = function( pnl, w, h )
 
+		--[[
 			draw.RoundedBox( 0, 5, h / 2 - 90 / 2, 90, 90, Color( 0, 0, 0, 100 ) )
 			
 			surface.SetDrawColor( 255, 255, 255, 255 )
@@ -429,8 +294,25 @@ function VOTEPANEL:Refresh_Progress( keycode )
 			end
 			surface.DrawTexturedRect( 5, h / 2 - 90 / 2, 90, 90 )
 			
+		--]]
+			draw.RoundedBox( 0, 0, 0, 90, h, Color( 0, 0, 0, 100 ) )
+			
+			if ( self.imageTable[ value.Map ] ) then
+				if ( self.imageTable[ value.Map ] == 1 ) then
+					surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial( Material( "maps/thumb/" .. value.Map .. ".png" ) )
+					surface.DrawTexturedRect( 0, 0, 90, h )				
+				elseif ( self.imageTable[ value.Map ] == 2 ) then
+					surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial( Material( LMapvote.map.GetDataByName( value.Map ).Image ) )
+					surface.DrawTexturedRect( 0, 0, 90, h )			
+				elseif ( self.imageTable[ value.Map ] == 0 ) then
+					draw.SimpleText( "No map icon :/", "LMapVote_font_04", 90 / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				end
+			end
+			
 			if ( key == 1 ) then
-				draw.RoundedBox( 0, 0, 0, w, 30, Color( 255, 255, 255, 100 ) )
+				draw.RoundedBox( 0, 0, 0, w, 30, Color( 255, 255, 255, 200 ) )
 			end
 
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 10 ) )
@@ -468,24 +350,48 @@ end
 
 function VOTEPANEL:Refresh_MapList( )
 	self.CenterMenu:Clear( )
+	
+	local imageTable = { }
+	
+	for key, value in pairs( LMapvote.system.vote.coreTable[ "MapList" ] ) do
+		if ( !value.Image or value.Image == "" ) then
+			if ( file.Exists( "maps/thumb/" .. value.Name .. ".png", "GAME" ) ) then
+				imageTable[ value.Name ] = 1
+			else
+				imageTable[ value.Name ] = 0
+			end
+		else
+			if ( file.Exists( "materials/" .. value.Image, "GAME" ) ) then
+				imageTable[ value.Name ] = 2
+			else
+				imageTable[ value.Name ] = 0
+			end
+		end
+	end
+	
+	
 	for key, value in pairs( LMapvote.system.vote.coreTable[ "MapList" ] ) do
 		local map = vgui.Create( "DButton" )
 		map:SetText( "" )
 		map:SetSize( 150, 150 )
 		map.Paint = function( pnl, w, h )
-		
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 100 ) )
 			
-			surface.SetDrawColor( 255, 255, 255, 255 )
-			if ( !value.Image or value.Image == "" ) then
-				surface.SetMaterial( Material( "maps/thumb/" .. value.Name .. ".png" ) )
-			else
-				surface.SetMaterial( Material( value.Image ) )
+			if ( imageTable[ value.Name ] ) then
+				if ( imageTable[ value.Name ] == 1 ) then
+					surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial( Material( "maps/thumb/" .. value.Name .. ".png" ) )
+					surface.DrawTexturedRect( 0, 0, w, h )				
+				elseif ( imageTable[ value.Name ] == 2 ) then
+					surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial( Material( value.Image ) )
+					surface.DrawTexturedRect( 0, 0, w, h )			
+				elseif ( imageTable[ value.Name ] == 0 ) then
+					draw.SimpleText( "No map icon :/", "LMapVote_font_04", w / 2, h / 2 - ( 20 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				end
 			end
-			surface.DrawTexturedRect( 0, 0, w, h )
 
 			draw.RoundedBox( 0, 0, h - 30, w, 30, Color( 0, 0, 0, 100 ) )			
-			
 			draw.SimpleText( value.Name, "LMapVote_font_02", w / 2, h - ( 30 / 2 ), Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 		map.DoClick = function( )

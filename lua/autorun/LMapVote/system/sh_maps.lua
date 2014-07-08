@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.0
+	LMAPVote - 1.1
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -35,7 +35,6 @@ end
 
 LMapvote.map.Register( "gm_construct", "" )
 LMapvote.map.Register( "gm_flatgrass", "" )
-
 
 -- WARNING - Do not insert 'LMapvote.map.Register' codes bottom this. :p
 do

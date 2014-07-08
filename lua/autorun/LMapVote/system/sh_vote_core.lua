@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.0
+	LMAPVote - 1.1
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -74,22 +74,22 @@ function LMapvote.system.vote.Sync( enum, tab )
 				for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
 					work_co = work_co + 1
 					for i = 1, #value.Voter do
-						if ( value.Voter[ i ] == caller:Name( )) then
+						if ( value.Voter[ i ] == caller:Name( ) ) then
 							table.remove( value.Voter, i )
 							value.Count = value.Count - 1
 						end
 					end
 					if ( work_co == count ) then
-							LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][map].Voter[ #LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][map].Voter + 1 ] = caller:Name( )
-							LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][map].Count = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][map].Count + 1
-							for _, ent in pairs( player.GetAll( ) ) do
-								netstream.Start(
-									ent, 
-									"LMapvote.system.vote.sync",
-									{ Type = 5, Table = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] }
-								)
-							end
-							return
+						LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][map].Voter[ #LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][map].Voter + 1 ] = caller:Name( )
+						LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][map].Count = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][map].Count + 1
+						for _, ent in pairs( player.GetAll( ) ) do
+							netstream.Start(
+								ent, 
+								"LMapvote.system.vote.sync",
+								{ Type = 5, Table = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] }
+							)
+						end
+						return
 					end
 				end
 			else
@@ -166,7 +166,7 @@ if ( SERVER ) then
 	
 	if ( LMapvote.system.vote.GetStatus( ) == false ) then
 		LMapvote.system.vote.SetStatus( false )
-		SetGlobalInt( "LMapvote.system.vote.Timer", 60 )
+		SetGlobalInt( "LMapvote.system.vote.Timer", tonumber( LMapvote.config.VoteTime ) )
 	end
 
 	function LMapvote.system.vote.Start( )
@@ -180,7 +180,7 @@ if ( SERVER ) then
 			LMapvote.system.vote.coreTable = { }
 		end
 		
-		SetGlobalInt( "LMapvote.system.vote.Timer", 60 )
+		SetGlobalInt( "LMapvote.system.vote.Timer", tonumber( LMapvote.config.VoteTime ) )
 		LMapvote.system.vote.SetStatus( true )
 		
 		LMapvote.system.vote.coreTable = {
@@ -256,7 +256,7 @@ if ( SERVER ) then
 				end
 
 				if ( current_receiver >= player_Count ) then
-					SetGlobalInt( "LMapvote.system.vote.Timer", 60 )
+					SetGlobalInt( "LMapvote.system.vote.Timer", tonumber( LMapvote.config.VoteTime ) )
 					LMapvote.system.vote.SetStatus( false )
 					for _, ent in pairs( player.GetAll( ) ) do
 						if ( IsValid( ent ) ) then
@@ -325,7 +325,7 @@ if ( SERVER ) then
 			timer.Destroy( "LMapvote.system.vote.Timer" )	
 		end
 		
-		SetGlobalInt( "LMapvote.system.vote.Timer", 60 )
+		SetGlobalInt( "LMapvote.system.vote.Timer", tonumber( LMapvote.config.VoteTime ) )
 		LMapvote.system.vote.SetStatus( false )
 		
 		LMapvote.system.vote.coreTable = { }
