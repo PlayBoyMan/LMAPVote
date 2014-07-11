@@ -1,7 +1,7 @@
 "AddonInfo"
 {
 	"name"				"LMAPVote"
-	"version"			"1.1"
+	"version"			"1.5b"
 	"up_date"			""
 	"author_name"			"L7D"
 	"author_email"			"smhjyh2009@gmail.com"

@@ -454,6 +454,9 @@ function ADMINPANEL:Init( )
 		elseif ( server_status == 5 ) then
 			server_status_msg = "Stopped by user setting ..."
 			server_status_col = Color( 255, 0, 0, 255 )			
+		elseif ( server_status == 6 ) then
+			server_status_msg = "Getting Cloud server IP by hostname server ..."
+			server_status_col = Color( 0, 0, 0, 255 )		
 		end
 		
 		if ( server_status != 1 ) then
@@ -501,6 +504,22 @@ function ADMINPANEL:Init( )
 		draw.SimpleText( "Cloud Server Connection Status", "LMapVote_font_02", w / 2, h * 0.2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		draw.SimpleText( server_status_msg, "LMapVote_font_05", w / 2, h * 0.3, server_status_col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		
+		// GetGlobalString( "LMapvote.system.cloud.HostName", "nil" )
+		
+		local hostname = GetGlobalString( "LMapvote.system.cloud.HostName", "nil" )
+		if ( hostname != "nil" ) then
+			draw.SimpleText( "Cloud Server Host - " .. hostname, "LMapVote_font_04", 20, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Cloud Server DataBase - " .. LMapvote.config.CloudSVR_DataBase, "LMapVote_font_04", 20, h * 0.7, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		else
+			if ( server_status == 0 ) then
+				draw.SimpleText( "Cloud Server Host - Using custom HostIP", "LMapVote_font_04", 20, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "Cloud Server DataBase - Using custom DataBase", "LMapVote_font_04", 20, h * 0.7, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			else
+				draw.SimpleText( "Cloud Server Host - Offline :(", "LMapVote_font_04", 20, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "Cloud Server DataBase - Offline :(", "LMapVote_font_04", 20, h * 0.7, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			end
+		end
+
 		if ( server_status == 2 or server_status == 3 ) then
 			draw.SimpleText( LMapvote.system.cloud.GetRecTimeLeft( ) .. " second after do reconnect ...", "LMapVote_font_05", w / 2, h * 0.4, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
@@ -813,7 +832,6 @@ function ADMINPANEL:Freeboardboard_Open( )
 	end
 	self.FreeBoard.AddBoardButton.DoClick = function( )
 		LMapvote.PlayButtonSound( )
-		
 		self:FreeBoard_Add_Func( LMapvote.system.cloud.Cache[ "FREE_BOARD" ] )
 	end
 	
@@ -830,7 +848,6 @@ function ADMINPANEL:Freeboardboard_Open( )
 	self.FreeBoard.SyncButton.DoClick = function( )
 		LMapvote.PlayButtonSound( )
 		LMapvote.system.cloud.Get_NOTICEBOARD_DATA( true )
-
 	end
 
 	
@@ -1296,18 +1313,3 @@ function ADMINPANEL:Refresh_Maplist( )
 end
 
 vgui.Register( "LMapVote_ADMIN", ADMINPANEL, "Panel" )
-
-
-
--- DELETE PLEASE!
-do
-	if ( !adminPanel ) then
-		adminPanel = vgui.Create( "LMapVote_ADMIN" )
-	else
-		if ( adminPanel.Frame ) then
-			adminPanel.Frame:Remove( )
-			adminPanel.Frame = nil
-		end
-		adminPanel = vgui.Create( "LMapVote_ADMIN" )
-	end
-end
