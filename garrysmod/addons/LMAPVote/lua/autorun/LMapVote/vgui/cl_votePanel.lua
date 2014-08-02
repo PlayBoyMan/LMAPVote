@@ -16,6 +16,8 @@ function VOTEPANEL:Init( )
 	self.imageTable = { }
 	self.imageTablebuffer = { }
 	
+	self.FirstChatEntryClicked = false
+	
 	if ( self.Frame ) then
 		self.Frame:Remove( )
 		self.Frame = nil
@@ -208,6 +210,12 @@ function VOTEPANEL:Init( )
 		draw.RoundedBox( 0, 0, h - 1, w, 1, Color( 0, 0, 0, 255 ) )
 			
 		pnl:DrawTextEntryText( Color( 0, 0, 0 ), Color( 0, 0, 0 ), Color( 0, 0, 0 ) )
+	end
+	self.ChatEntry.OnTextChanged = function( )
+		if ( !self.FirstChatEntryClicked ) then
+			self.ChatEntry:SetText( "" )
+			self.FirstChatEntryClicked = true
+		end
 	end
 	
 	self.ChatEntry.OnEnter = function( )
