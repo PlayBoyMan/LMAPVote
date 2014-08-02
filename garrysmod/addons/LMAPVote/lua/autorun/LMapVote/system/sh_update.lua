@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.1
+	LMAPVote - 1.3
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -28,15 +28,18 @@ function LMapvote.update.Check( )
 			function( value )
 				if ( string.find( value, "Error 404</p>" ) ) then
 					SetGlobalBool( "LMapvote.update.Status", false )
+					SetGlobalString( "LMapvote.update.Reason", "404 Error." )
 					LMapvote.kernel.Print( LMapvote.rgb.Red, "Update check failed, - 404 Error." )
 					return
 				end
 				SetGlobalBool( "LMapvote.update.Status", true )
+				SetGlobalString( "LMapvote.update.Reason", "" )
 				run( value )
 			end,
 			function( err )
 				LMapvote.kernel.Print( LMapvote.rgb.Red, "Update check failed, - " .. err )
 				SetGlobalBool( "LMapvote.update.Status", false )
+				SetGlobalString( "LMapvote.update.Reason", err )
 			end
 		)
 	end
@@ -62,6 +65,7 @@ if ( SERVER ) then
 	end )
 
 	hook.Add( "PlayerAuthed", "LMapvote.update.PlayerAuthed", function( pl )
+		LMapvote.update.Check( )
 		netstream.Start( pl, "LMapvote.update.Send", {
 			Tab = LMapvote.update.buffer
 		} )
@@ -77,8 +81,4 @@ elseif ( CLIENT ) then
 			adminPanel.UpdateCheckDeleayed = false
 		end
 	end )
-	
-	do
-		LMapvote.update.Check( )
-	end
 end

@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.1
+	LMAPVote - 1.3
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -61,6 +61,7 @@ function VOTEPANEL:Init( )
 	self.Frame:SetPos( self.x, self.y )
 	self.Frame:SetTitle( "" )
 	self.Frame:ShowCloseButton( false )
+	self.Frame:SetDraggable( false )
 	self.Frame:MakePopup( )
 	self.Frame:Center( )
 	self.Frame.Paint = function( pnl, w, h )

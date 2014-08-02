@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.1
+	LMAPVote - 1.3
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -20,6 +20,9 @@ LMapvote.font.Add( "LMapVote_font_02", "Segoe UI", 20, 1000 )
 LMapvote.font.Add( "LMapVote_font_03", "Segoe UI Light", 20, 1000 )
 LMapvote.font.Add( "LMapVote_font_04", "Segoe UI", 15, 1000 )
 LMapvote.font.Add( "LMapVote_font_05", "Segoe UI Light", 15, 1000 )
+LMapvote.font.Add( "LMapVote_font_06", "Segoe UI Bold", 25, 1000 )
+LMapvote.font.Add( "LMapVote_font_07", "Segoe UI Light", 30, 1000 )
+LMapvote.font.Add( "LMapVote_font_08", "Segoe UI", 23, 1000 )
 
 do
 	for i = 1, #LMapvote.font.buffer do
