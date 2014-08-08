@@ -406,9 +406,7 @@ function ADMINPANEL:Init( )
 			self.Frame.Panel03.Vote:SetText( "VOTE START" )
 		end
 	end
-	
-	
-	
+
 	self.Frame.Panel04 = vgui.Create( "DPanel", self.Frame )
 	
 	self.Frame.Panel04.w = self.w / 3 - ( 10 * 3 ) - ( 15 )
@@ -438,7 +436,7 @@ function ADMINPANEL:Init( )
 	self.Frame.Contact = vgui.Create( "DButton", self.Frame )
 	self.Frame.Contact:SetPos( 30 + self.w * 0.15, self.h - 40 )
 	self.Frame.Contact:SetSize( self.w * 0.15, 30 )
-	self.Frame.Contact:SetText( "Contact to ME :)" )
+	self.Frame.Contact:SetText( "Contact ME :?" )
 	self.Frame.Contact:SetFont( "LMapVote_font_02" )
 	self.Frame.Contact:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.Contact.Paint = function( pnl, w, h )
@@ -446,10 +444,9 @@ function ADMINPANEL:Init( )
 	end
 	self.Frame.Contact.DoClick = function( )
 		LMapvote.PlayButtonSound( )
-		gui.OpenURL( "http://steamcommunity.com/profiles/76561198011675377" )// 76561198011675377
-
+		gui.OpenURL( "http://steamcommunity.com/profiles/76561198011675377" )
 	end
-	print( util.SteamIDTo64( "STEAM_0:1:25704824" ) )
+
 	self.Frame.CloseButton = vgui.Create( "DButton", self.Frame )
 	self.Frame.CloseButton:SetPos( 15, self.h - 40 )
 	self.Frame.CloseButton:SetSize( self.w * 0.15, 30 )
@@ -464,8 +461,7 @@ function ADMINPANEL:Init( )
 		self.Frame:Remove( )
 		self.Frame = nil
 	end
-	
-	
+
 	self:Refresh_Maplist( )
 end
 
