@@ -55,9 +55,9 @@ function ADMINPANEL:Init( )
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 255, 255, 235 ) )
 
 		draw.SimpleText( "LMAPVote Administrator", "LMapVote_font_01", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Welcome " .. LocalPlayer( ):Name( ), "LMapVote_font_03", w - 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMapVote_font_05", w - 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMapVote_font_05", w - 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Welcome " .. LocalPlayer( ):Name( ), "LMapVote_font_08", w - 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMapVote_font_04", w - 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMapVote_font_04", w - 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 	end
 	
 	
@@ -131,7 +131,7 @@ function ADMINPANEL:Init( )
 					if ( LMapvote.update.buffer[ "Server_Status" ] ) then
 						draw.SimpleText( "Server Status - " .. LMapvote.update.buffer[ "Server_Status" ], "LMapVote_font_02", w / 2, h * 0.3 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					else
-						draw.SimpleText( "Server Status - Offline :(", "LMapVote_font_02", w / 2, h * 0.3 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+						draw.SimpleText( "Server Status - OFFLINE :<", "LMapVote_font_02", w / 2, h * 0.3 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					end
 					
 					if ( LMapvote.update.buffer[ "Latest_Version" ] ) then
@@ -146,8 +146,8 @@ function ADMINPANEL:Init( )
 						if ( LMapvote.update.buffer[ "Latest_Version" ] == LMapvote.config.Version ) then
 							surface.SetDrawColor( 255, 255, 255, 255 )
 							surface.SetMaterial( Material( "icon16/tick.png" ) )
-							surface.DrawTexturedRect( w / 2 - w * 0.4, h * 0.6 - 16 / 2, 16, 16 )
-							draw.SimpleText( "Your using latest version, thanks.", "LMapVote_font_02", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+							surface.DrawTexturedRect( w / 2, h * 0.5 - 16 / 2, 16, 16 )
+							draw.SimpleText( "Your LMAPVote is latest version, Thank you :)", "LMapVote_font_02", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 							self.Frame.Panel01.UpdateLink:SetVisible( false )
 							self.Frame.Panel01.CheckUpdate:SetVisible( true )
 							self.Frame.Panel01.ShowChangeLog:SetVisible( true )
@@ -156,8 +156,8 @@ function ADMINPANEL:Init( )
 						else
 							surface.SetDrawColor( 255, 255, 255, 255 )
 							surface.SetMaterial( Material( "icon16/error.png" ) )
-							surface.DrawTexturedRect( w / 2 - surface.GetTextSize( "You need update." ), h * 0.6 - 16 / 2, 16, 16 )
-							draw.SimpleText( "You need update.", "LMapVote_font_02", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+							surface.DrawTexturedRect( w / 2, h * 0.5 - 16 / 2, 16, 16 )
+							draw.SimpleText( "You need Update.. :<", "LMapVote_font_02", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 							self.Frame.Panel01.UpdateLink:SetVisible( true )
 							self.Frame.Panel01.CheckUpdate:SetVisible( true )
 							self.Frame.Panel01.ShowChangeLog:SetVisible( true )
@@ -188,7 +188,7 @@ function ADMINPANEL:Init( )
 				draw.SimpleText( "Update check failed - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMapVote_font_02", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			end
 		elseif ( self.Frame.Panel01.ShowType == 2 ) then
-			draw.SimpleText( "Changelog", "LMapVote_font_03", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Update log", "LMapVote_font_03", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			
 			self.Frame.Panel01.UpdateLink:SetVisible( false )
 			self.Frame.Panel01.CheckUpdate:SetVisible( false )
@@ -296,7 +296,7 @@ function ADMINPANEL:Init( )
 	self.Frame.Panel01.ShowChangeLog:SetSize( self.Frame.Panel01.w - 10, 30 )
 	self.Frame.Panel01.ShowChangeLog:SetPos( self.Frame.Panel01.w / 2 - ( self.Frame.Panel01.w - 10 ) / 2, self.Frame.Panel01.h - 105 )
 	self.Frame.Panel01.ShowChangeLog:SetFont( "LMapVote_font_03" )
-	self.Frame.Panel01.ShowChangeLog:SetText( "Show changelog" )
+	self.Frame.Panel01.ShowChangeLog:SetText( "Show Update log" )
 	self.Frame.Panel01.ShowChangeLog:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.Panel01.ShowChangeLog.DoClick = function( )
 		LMapvote.PlayButtonSound( )
@@ -307,7 +307,7 @@ function ADMINPANEL:Init( )
 			self:Refresh_Changelog( )
 		elseif ( self.Frame.Panel01.ShowType == 2 ) then
 			self.Frame.Panel01.ShowType = 1
-			self.Frame.Panel01.ShowChangeLog:SetText( "Show changelog" )
+			self.Frame.Panel01.ShowChangeLog:SetText( "Show Update log" )
 		end
 	end
 	self.Frame.Panel01.ShowChangeLog.Paint = function( pnl, w, h )
@@ -444,7 +444,7 @@ function ADMINPANEL:Init( )
 	self.Frame.CloseButton = vgui.Create( "DButton", self.Frame )
 	self.Frame.CloseButton:SetPos( 15, self.h - 40 )
 	self.Frame.CloseButton:SetSize( self.w * 0.15, 30 )
-	self.Frame.CloseButton:SetText( "Close" )
+	self.Frame.CloseButton:SetText( "Logout" )
 	self.Frame.CloseButton:SetFont( "LMapVote_font_02" )
 	self.Frame.CloseButton:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.CloseButton.Paint = function( pnl, w, h )
@@ -463,7 +463,7 @@ function ADMINPANEL:Refresh_Changelog( )
 	if ( !LMapvote.update.buffer ) then return end
 	if ( self.Frame.Panel01.ShowType != 2 ) then return end
 	if ( !LMapvote.update.buffer[ "Update_Log" ] ) then
-		LMapvote.derma.message( "Can't load changelog DATA.", "ERROR", "Okay" )
+		LMapvote.derma.message( "Can't load update log data, please reopen administrator menu.", "ERROR", "Okay" )
 		return
 	end
 	self.Frame.Panel01.ChangelogMenu:Clear( )
@@ -506,7 +506,7 @@ end
 
 function ADMINPANEL:Refresh_Maplist( )
 	if ( !LMapvote.map.buffer ) then
-		Derma_Message( "Can't load map data.", "ERROR", "OK" )
+		LMapvote.derma.message( "Can't load map data, please reopen administrator menu.", "ERROR", "Okay" )
 		return
 	end
 	self.Frame.Panel02.MaplistMenu:Clear( )
