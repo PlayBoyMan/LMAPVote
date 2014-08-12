@@ -1,11 +1,11 @@
 --[[
-	LMAPVote - 1.3
+	LMAPVote - 1.4
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
 LMapvote.config = LMapvote.config or { }
 
-LMapvote.config.Version = "1.3" -- Do not edit this. ;>
+LMapvote.config.Version = "1.4" -- Do not edit this. ;>
 
 --[[
 	How can i change command and other permission?
@@ -21,4 +21,7 @@ LMapvote.config.HavePermission = function( pl )
 	end
 end
 
+LMapvote.config.VotePanel_MonochromeEffect = true
+LMapvote.config.VotePanel_BlurEffect_ammount = 8
+LMapvote.config.VoteResult_Sound = "buttons/button1.wav"
 LMapvote.config.VoteTime = 60

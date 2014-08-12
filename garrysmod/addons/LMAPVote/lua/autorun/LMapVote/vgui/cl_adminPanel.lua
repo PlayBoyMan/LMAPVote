@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.3
+	LMAPVote - 1.4
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -51,7 +51,7 @@ function ADMINPANEL:Init( )
 				return
 			end
 		end
-		
+
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 255, 255, 235 ) )
 
 		draw.SimpleText( "LMAPVote Administrator", "LMapVote_font_01", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
@@ -110,6 +110,10 @@ function ADMINPANEL:Init( )
 				end
 			end
 		else
+			surface.SetDrawColor( 0, 0, 0, 15 )
+			surface.SetMaterial( Material( "gui/gradient" ) )
+			surface.DrawTexturedRect( 0, 0, w, 40 )
+					
 			draw.RoundedBox( 0, 0, 40, w, 1, Color( 215, 215, 215, 235 ) )
 			
 			draw.RoundedBox( 0, 0, 0, w, 1, Color( 215, 215, 215, 235 ) )
@@ -163,15 +167,25 @@ function ADMINPANEL:Init( )
 						end
 					end
 				else
-					draw.SimpleText( "Update system error - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMapVote_font_02", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+					surface.SetDrawColor( 255, 150, 150, 90 )
+					surface.SetMaterial( Material( "gui/center_gradient" ) )
+					surface.DrawTexturedRect( w / 2 - ( w / 2 ) / 2, h / 2 - 40, w / 2, 25 )
+					
+					draw.SimpleText( "ERROR", "LMapVote_font_06", w / 2, h / 2 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+					draw.SimpleText( "Update check failed - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMapVote_font_02", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					self.Frame.Panel01.CheckUpdate:SetVisible( true )
-					self.Frame.Panel01.ShowChangeLog:SetVisible( true )
+					self.Frame.Panel01.ShowChangeLog:SetVisible( false )
 					self.Frame.Panel01.UpdateLink:SetVisible( false )
 					self.Frame.Panel01.ShowChangeLog:SetPos( self.Frame.Panel01.w / 2 - ( self.Frame.Panel01.w - 10 ) / 2, self.Frame.Panel01.h - 70 )
 					self.Frame.Panel01.CheckUpdate:SetPos( self.Frame.Panel01.w / 2 - ( self.Frame.Panel01.w - 10 ) / 2, self.Frame.Panel01.h - 35 )
 				end
 			else
-				draw.SimpleText( "Update system error - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMapVote_font_02", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				surface.SetDrawColor( 255, 150, 150, 90 )
+				surface.SetMaterial( Material( "gui/center_gradient" ) )
+				surface.DrawTexturedRect( w / 2 - ( w / 2 ) / 2, h / 2 - 40, w / 2, 25 )
+				
+				draw.SimpleText( "ERROR", "LMapVote_font_06", w / 2, h / 2 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "Update check failed - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMapVote_font_02", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			end
 		elseif ( self.Frame.Panel01.ShowType == 2 ) then
 			draw.SimpleText( "Changelog", "LMapVote_font_03", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
@@ -247,6 +261,12 @@ function ADMINPANEL:Init( )
 			end
 		end
 		
+		if ( !self.Frame.Panel01.CheckUpdate.Status ) then
+			surface.SetDrawColor( 255, 150, 150, 150 )
+			surface.SetMaterial( Material( "gui/center_gradient" ) )
+			surface.DrawTexturedRect( 0, 0, w, h )
+		end
+		
 		draw.NoTexture( )
 		if ( self.Frame.Panel01.CheckUpdate.Status ) then
 			surface.SetDrawColor( 0, 0, 0, 255 )
@@ -304,7 +324,6 @@ function ADMINPANEL:Init( )
 	self.Frame.Panel01.ChangelogMenu.Paint = function( pnl, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 8 ) )
 	end
-	
 	
 	self.Frame.Panel02 = vgui.Create( "DPanel", self.Frame )
 	
@@ -407,43 +426,18 @@ function ADMINPANEL:Init( )
 		end
 	end
 
-	self.Frame.Panel04 = vgui.Create( "DPanel", self.Frame )
-	
-	self.Frame.Panel04.w = self.w / 3 - ( 10 * 3 ) - ( 15 )
-	self.Frame.Panel04.h = self.h * 0.4
-	self.Frame.Panel04.x = ( 30 + self.w / 3 - ( 10 * 3 ) - ( 15 ) )
-	self.Frame.Panel04.y = self.h * 0.5
-	
-	self.Frame.Panel04:SetSize( self.Frame.Panel04.w, self.Frame.Panel04.h )
-	self.Frame.Panel04:SetPos( self.Frame.Panel04.x, self.Frame.Panel04.y )
-	self.Frame.Panel04.Paint = function( pnl, w, h )
-		surface.SetDrawColor( 0, 0, 0, 15 )
-		surface.SetMaterial( Material( "gui/gradient" ) )
-		surface.DrawTexturedRect( 0, 0, w, 40 )
-			
-		draw.RoundedBox( 0, 0, 40, w, 1, Color( 215, 215, 215, 235 ) )
-		
-		draw.RoundedBox( 0, 0, 0, w, 1, Color( 215, 215, 215, 235 ) )
-		draw.RoundedBox( 0, 0, 0, 1, h, Color( 215, 215, 215, 235 ) )
-		
-		draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 215, 215, 215, 235 ) )
-		draw.RoundedBox( 0, 0, h - 1, w, 1, Color( 215, 215, 215, 235 ) )
-		
-		draw.SimpleText( "Cloud Service Dashboard", "LMapVote_font_03", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Sorry, This system is currently developing!", "LMapVote_font_02", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-	end
-	
 	self.Frame.Contact = vgui.Create( "DButton", self.Frame )
 	self.Frame.Contact:SetPos( 30 + self.w * 0.15, self.h - 40 )
 	self.Frame.Contact:SetSize( self.w * 0.15, 30 )
-	self.Frame.Contact:SetText( "Contact ME :?" )
+	self.Frame.Contact:SetText( "Contact ME :)" )
 	self.Frame.Contact:SetFont( "LMapVote_font_02" )
 	self.Frame.Contact:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.Contact.Paint = function( pnl, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 8 ) )
+		draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 15 ) )
 	end
 	self.Frame.Contact.DoClick = function( )
 		LMapvote.PlayButtonSound( )
+		LMapvote.derma.message( "Thanks for using LMAPVote, i always thanks by yours!", "Thanks", ":) .." )
 		gui.OpenURL( "http://steamcommunity.com/profiles/76561198011675377" )
 	end
 
@@ -461,7 +455,7 @@ function ADMINPANEL:Init( )
 		self.Frame:Remove( )
 		self.Frame = nil
 	end
-
+	
 	self:Refresh_Maplist( )
 end
 
@@ -469,7 +463,7 @@ function ADMINPANEL:Refresh_Changelog( )
 	if ( !LMapvote.update.buffer ) then return end
 	if ( self.Frame.Panel01.ShowType != 2 ) then return end
 	if ( !LMapvote.update.buffer[ "Update_Log" ] ) then
-		Derma_Message( "Can't load changelog data.", "ERROR", "OK" )
+		LMapvote.derma.message( "Can't load changelog DATA.", "ERROR", "Okay" )
 		return
 	end
 	self.Frame.Panel01.ChangelogMenu:Clear( )

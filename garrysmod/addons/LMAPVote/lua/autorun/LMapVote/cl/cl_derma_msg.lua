@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.3
+	LMAPVote - 1.4
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -12,7 +12,7 @@ function LMapvote.derma.message( msg, title, okstr )
 	end
 	
 	surface.PlaySound( "buttons/combine_button1.wav" )
-	
+
 	LMapvote.derma.msg = vgui.Create( "DFrame" )
 	
 	LMapvote.derma.msg.w = ScrW( )
@@ -34,7 +34,7 @@ function LMapvote.derma.message( msg, title, okstr )
 		surface.DrawTexturedRect( w / 2 - ( w * 0.8 ) / 2, -1, w * 0.8, 25 )
 		
 		draw.SimpleText( title or "LMAPVote Message", "LMapVote_font_08", w / 2, 10, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		draw.SimpleText( msg or "Message", "LMapVote_font_07", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( msg or "Message", "LMapVote_font_09", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
 	
 	LMapvote.derma.msg.OK = vgui.Create( "DButton", LMapvote.derma.msg )
@@ -63,8 +63,8 @@ function LMapvote.derma.queryMSG( query, title, okstr, nostr, okFunc, noFunc )
 	end
 	
 	surface.PlaySound( "buttons/combine_button1.wav" )
-	
-	LMapvote.derma.query = vgui.Create( "DFrame" )
+
+	LMapvote.derma.query = vgui.Create( "DFrame", LMapvote.derma.query_back )
 	
 	LMapvote.derma.query.w = ScrW( )
 	LMapvote.derma.query.h = ScrH( ) * 0.25

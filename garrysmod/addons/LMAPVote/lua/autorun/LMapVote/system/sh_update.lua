@@ -1,12 +1,12 @@
 --[[
-	LMAPVote - 1.3
+	LMAPVote - 1.4
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
 LMapvote.update = LMapvote.update or { }
 
 function LMapvote.update.Check( )
-
+	
 	local function func( )
 		LMapvote.update.buffer = { }
 			
@@ -27,9 +27,15 @@ function LMapvote.update.Check( )
 		http.Fetch( "http://textuploader.com/k6d5/raw",
 			function( value )
 				if ( string.find( value, "Error 404</p>" ) ) then
+					LMapvote.update.buffer = { }
+					for _, ent in pairs( player.GetAll( ) ) do
+						netstream.Start( ent, "LMapvote.update.Send", {
+							Tab = LMapvote.update.buffer
+						} )
+					end
 					SetGlobalBool( "LMapvote.update.Status", false )
-					SetGlobalString( "LMapvote.update.Reason", "404 Error." )
-					LMapvote.kernel.Print( LMapvote.rgb.Red, "Update check failed, - 404 Error." )
+					SetGlobalString( "LMapvote.update.Reason", "404 ERROR." )
+					LMapvote.kernel.Print( LMapvote.rgb.Red, "Update check failed, - 404 ERROR." )
 					return
 				end
 				SetGlobalBool( "LMapvote.update.Status", true )
@@ -60,10 +66,6 @@ end
 if ( SERVER ) then
 	LMapvote.update.buffer = LMapvote.update.buffer or { }
 
-	hook.Add( "Initialize", "LMapvote.update.Initialize", function( )
-		LMapvote.update.Check( )
-	end )
-
 	hook.Add( "PlayerAuthed", "LMapvote.update.PlayerAuthed", function( pl )
 		LMapvote.update.Check( )
 		netstream.Start( pl, "LMapvote.update.Send", {
@@ -82,3 +84,5 @@ elseif ( CLIENT ) then
 		end
 	end )
 end
+
+LMapvote.update.Check( )

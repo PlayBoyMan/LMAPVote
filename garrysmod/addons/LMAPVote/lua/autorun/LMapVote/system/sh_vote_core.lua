@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.3
+	LMAPVote - 1.4
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -9,6 +9,7 @@ LMAPVOTE_SYNC_ENUM__ALL = 1
 LMAPVOTE_SYNC_ENUM__PROGRESSONLY = 2
 LMAPVOTE_SYNC_ENUM__CHATONLY = 3
 LMAPVOTE_SYNC_ENUM__PROGRESSALL = 4
+LMAPVOTE_SYNC_ENUM__VOICEONLY = 5
 
 function LMapvote.system.vote.Sync( enum, tab )
 	if ( !enum ) then
@@ -99,6 +100,51 @@ function LMapvote.system.vote.Sync( enum, tab )
 			return
 		end
 	end
+	
+	local function enum5_func( ent, bool )
+		if ( LMapvote.system.vote.coreTable ) then
+		--[[ -- To DO
+			local checkTable = { }
+			for i = 1, #LMapvote.system.vote.coreTable[ "Voice" ] do
+				if ( LMapvote.system.vote.coreTable[ "Voice" ][ i ] ) then
+					if ( !checkTable[ LMapvote.system.vote.coreTable[ "Voice" ][ i ] ] ) then
+						checkTable[ LMapvote.system.vote.coreTable[ "Voice" ][ i ] ] = 0
+					end
+					checkTable[ LMapvote.system.vote.coreTable[ "Voice" ][ i ] ] = checkTable[ LMapvote.system.vote.coreTable[ "Voice" ][ i ] ] + 1
+				end
+			end
+
+			for i = 1, #checkTable do
+				for i2 = 1, #LMapvote.system.vote.coreTable[ "Voice" ] do
+					if ( checkTable[ i ] >= 2 ) then
+						if ( LMapvote.system.vote.coreTable[ "Voice" ][ i2 ] == checkTable[ i ] ) then
+						
+							LMapvote.system.vote.coreTable[ "Voice" ][ i2 ] = nil
+						end
+					end
+				end
+			end
+		--]]
+		
+			if ( !bool ) then
+				for i = 1, #LMapvote.system.vote.coreTable[ "Voice" ] do
+					if ( LMapvote.system.vote.coreTable[ "Voice" ][ i ] == ent ) then
+						LMapvote.system.vote.coreTable[ "Voice" ][ i ] = nil
+					end
+				end
+			else
+				LMapvote.system.vote.coreTable[ "Voice" ][ #LMapvote.system.vote.coreTable[ "Voice" ] + 1 ] = ent
+			end
+
+			for _, ent in pairs( player.GetAll( ) ) do
+				netstream.Start(
+					ent, 
+					"LMapvote.system.vote.sync",
+					{ Type = 6, Table = LMapvote.system.vote.coreTable[ "Voice" ] }
+				)
+			end
+		end
+	end
 
 	netstream.Hook( "LMapvote.system.vote.sync_type1_toserver", function( )
 		enum1_func( )
@@ -114,6 +160,10 @@ function LMapvote.system.vote.Sync( enum, tab )
 	
 	netstream.Hook( "LMapvote.system.vote.sync_type4_toserver", function( caller, data )
 		enum4_func( data[1], data[2] )
+	end )
+	
+	netstream.Hook( "LMapvote.system.vote.sync_type5_toserver", function( caller, data )
+		enum5_func( data[1], data[2] )
 	end )
 
 	if ( enum == 1 ) then
@@ -145,6 +195,14 @@ function LMapvote.system.vote.Sync( enum, tab )
 			enum4_func( )
 		elseif ( CLIENT ) then
 			netstream.Start( "LMapvote.system.vote.sync_type4_toserver", { tab.Caller, tab.Map } )
+		end	
+	end
+	
+	if ( enum == 5 ) then
+		if ( SERVER ) then
+			enum5_func( )
+		elseif ( CLIENT ) then
+			netstream.Start( "LMapvote.system.vote.sync_type5_toserver", { tab.Ent, tab.Bool } )
 		end	
 	end
 end
@@ -186,7 +244,8 @@ if ( SERVER ) then
 		LMapvote.system.vote.coreTable = {
 			Chat = { },
 			Core = { Vote = { } },
-			MapList = { }
+			MapList = { },
+			Voice = { }
 		}
 		
 		local mapFileCache = { }
@@ -427,6 +486,11 @@ elseif ( CLIENT ) then
 					end
 				end
 			end
+		elseif ( data.Type == 6 ) then	
+			LMapvote.system.vote.coreTable[ "Voice" ] = data.Table
+			if ( votePanel ) then
+				votePanel:Refresh_Voice( )
+			end
 		end
 	end )
 	
@@ -438,6 +502,10 @@ elseif ( CLIENT ) then
 				votePanel.Frame:Remove( )
 				votePanel.Frame = nil
 			end
+			if ( votePanel.BackPanel ) then 
+				votePanel.BackPanel:Remove( )
+				votePanel.BackPanel = nil
+			end
 			votePanel = vgui.Create( "LMapVote_VOTE" )
 		end
 	end )
@@ -447,7 +515,13 @@ elseif ( CLIENT ) then
 			if ( votePanel.Frame ) then
 				votePanel.Frame:Remove( )
 				votePanel.Frame = nil
+				
 			end
+			if ( votePanel.BackPanel ) then 
+				votePanel.BackPanel:Remove( )
+				votePanel.BackPanel = nil
+			end
+			
 		end
 	end )
 
