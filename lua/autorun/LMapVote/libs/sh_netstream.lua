@@ -1,11 +1,11 @@
 --[[
-	LMAPVote - 1.4
+	LMAPVote - 1.5
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
 --[[
 	NetStream
-	http://www.revotech.org
+	[url]http://www.revotech.org[/url]
 	
 	Copyright (c) 2012 Alexander Grist-Hucker
 	
@@ -14,8 +14,10 @@
 	the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
 	and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
+
 	The above copyright notice and this permission notice shall be included in all copies or substantial portions 
 	of the Software.
+
 
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
 	TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
@@ -25,18 +27,19 @@
 	
 	Credits to:
 		Alexandru-Mihai Maftei aka Vercas for vON.
-		https://dl.dropbox.com/u/1217587/GMod/Lua/von%20for%20GMOD.lua
+		[url]https://dl.dropbox.com/u/1217587/GMod/Lua/von%20for%20GMOD.lua[/url]
 --]]
 
-if (!von) then
-	AddCSLuaFile( "sh_von.lua" )
-	include( "sh_von.lua" )
-end
 
 local type, error, pcall, pairs, AddCSLuaFile, require, _player = type, error, pcall, pairs, AddCSLuaFile, require, player
 
-netstream = netstream or {};
-netstream.stored = netstream.stored or {};
+if (!von) then
+	AddCSLuaFile( "libs/sh_von.lua" )
+	include( "libs/sh_von.lua" )
+end;
+
+netstream = {};
+netstream.stored = {};
 
 -- A function to hook a data stream.
 function netstream.Hook(name, Callback)
@@ -46,54 +49,45 @@ end;
 if (SERVER) then
 	util.AddNetworkString("NetStreamDS");
 
+
 	-- A function to start a net stream.
 	function netstream.Start(player, name, data)
 		local recipients = {};
 		local bShouldSend = false;
-
+	
 		if (type(player) != "table") then
-			if (player) then
+			if (!player) then
+				player = _player.GetAll();
+			else
 				player = {player};
 			end;
 		end;
 		
-		if (player) then
-			for k, v in pairs(player) do
-				if (type(v) == "Player") then
-					recipients[#recipients + 1] = v;
-					
-					bShouldSend = true;
-				elseif (type(k) == "Player") then
-					recipients[#recipients + 1] = k;
+		for k, v in pairs(player) do
+			if (type(v) == "Player") then
+				recipients[#recipients + 1] = v;
 				
-					bShouldSend = true;
-				end;
+				bShouldSend = true;
+			elseif (type(k) == "Player") then
+				recipients[#recipients + 1] = k;
+			
+				bShouldSend = true;
 			end;
-		else
-			bShouldSend = true
-		end
-
-		if (data == nil) then
-			data = 0 -- Fill the data so the length isn't 0.
-		end
-
+		end;
+		
 		local dataTable = {data = data};
 		local vonData = von.serialize(dataTable);
 		local encodedData = util.Compress(vonData);
-
+			
 		if (encodedData and #encodedData > 0 and bShouldSend) then
 			net.Start("NetStreamDS");
 				net.WriteString(name);
 				net.WriteUInt(#encodedData, 32);
 				net.WriteData(encodedData, #encodedData);
-			if (player) then
-				net.Send(recipients);
-			else
-				net.Broadcast()
-			end
+			net.Send(recipients);
 		end;
 	end;
-
+	
 	net.Receive("NetStreamDS", function(length, player)
 		local NS_DS_NAME = net.ReadString();
 		local NS_DS_LENGTH = net.ReadUInt(32);
@@ -120,7 +114,7 @@ if (SERVER) then
 					if (bStatus) then
 						netstream.stored[player.nsDataStreamName](player, value.data);
 					else
-						ErrorNoHalt("NetStream: '"..NS_DS_NAME.."'\n"..value.."\n");
+						error("NetStream: "..value);
 					end;
 				end;
 				
@@ -168,7 +162,7 @@ else
 				if (bStatus) then
 					netstream.stored[NS_DS_NAME](value.data);
 				else
-					ErrorNoHalt("NetStream: '"..NS_DS_NAME.."'\n"..value.."\n");
+					error("NetStream: "..value);
 				end;
 			end;
 		end;

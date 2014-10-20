@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.4
+	LMAPVote - 1.5
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -17,7 +17,7 @@ LMapvote.rgb = {
 }
 
 function LMapvote.kernel.Print( colCode, message )
-	MsgC( colCode, "[LMapVote] " .. message .. "\n" )
+	MsgC( colCode, "[LMAPVote] " .. message .. "\n" )
 end
 
 function LMapvote.kernel.FindPlayerByName( name )
@@ -92,9 +92,11 @@ function LMapvote.kernel.IncludeFolder( folder )
 end
 
 LMapvote.kernel.Include( "sh_config.lua" )
-LMapvote.kernel.IncludeFolder( "libs" )
+LMapvote.kernel.Include( "libs/sh_von.lua" )
+LMapvote.kernel.Include( "libs/sh_netstream.lua" )
 LMapvote.kernel.IncludeFolder( "system" )
 LMapvote.kernel.IncludeFolder( "cl" )
 LMapvote.kernel.IncludeFolder( "vgui" )
 
 LMapvote.kernel.Print( LMapvote.rgb.Green, "LMAPVote loaded, Version - " .. LMapvote.config.Version )
+LMapvote.kernel.Print( LMapvote.rgb.Green, "LMAPVote By L7D." )

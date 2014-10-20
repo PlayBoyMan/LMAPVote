@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.4
+	LMAPVote - 1.5
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -56,8 +56,8 @@ function LMapvote.update.Check( )
 			func( )
 		end )
 	elseif ( CLIENT ) then
-		if ( adminPanel and IsValid( adminPanel ) ) then
-			adminPanel.UpdateCheckDeleayed = true
+		if ( LMapvote.panel.adminPanel and IsValid( LMapvote.panel.adminPanel ) ) then
+			LMapvote.panel.adminPanel.UpdateCheckDeleayed = true
 		end
 		netstream.Start( "LMapvote.update.FunctionSend", 1 )
 	end
@@ -79,10 +79,8 @@ elseif ( CLIENT ) then
 	netstream.Hook( "LMapvote.update.Send", function( data )
 		LMapvote.update.buffer = data.Tab
 		
-		if ( adminPanel and IsValid( adminPanel ) ) then
-			adminPanel.UpdateCheckDeleayed = false
+		if ( LMapvote.panel.adminPanel and IsValid( LMapvote.panel.adminPanel ) ) then
+			LMapvote.panel.adminPanel.UpdateCheckDeleayed = false
 		end
 	end )
 end
-
-LMapvote.update.Check( )

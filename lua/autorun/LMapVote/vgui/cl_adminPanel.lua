@@ -1,18 +1,15 @@
 --[[
-	LMAPVote - 1.4
+	LMAPVote - 1.5
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
 concommand.Add( "LMAPVote_admin", function( pl )
 	if ( LMapvote.config.HavePermission( pl ) ) then
-		if ( !adminPanel ) then
-			adminPanel = vgui.Create( "LMapVote_ADMIN" )
+		if ( !LMapvote.panel.adminPanel ) then
+			LMapvote.panel.adminPanel = vgui.Create( "LMapVote_ADMIN" )
 		else
-			if ( adminPanel.Frame ) then
-				adminPanel.Frame:Remove( )
-				adminPanel.Frame = nil
-			end
-			adminPanel = vgui.Create( "LMapVote_ADMIN" )
+			LMapvote.panel.adminPanel:Close( )
+			LMapvote.panel.adminPanel = vgui.Create( "LMapVote_ADMIN" )
 		end
 	end
 end )
@@ -54,10 +51,10 @@ function ADMINPANEL:Init( )
 
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 255, 255, 235 ) )
 
-		draw.SimpleText( "LMAPVote Administrator", "LMapVote_font_01", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Welcome " .. LocalPlayer( ):Name( ), "LMapVote_font_08", w - 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMapVote_font_04", w - 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMapVote_font_04", w - 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "LMAPVote Administrator", "LMAPVote_font01_30", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Welcome " .. LocalPlayer( ):Name( ), "LMAPVote_font01_20", w - 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMAPVote_font01_15", w - 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMAPVote_font01_15", w - 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 	end
 	
 	
@@ -124,22 +121,22 @@ function ADMINPANEL:Init( )
 		end
 		
 		if ( self.Frame.Panel01.ShowType == 1 ) then
-			draw.SimpleText( "Software Update Dashboard", "LMapVote_font_03", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Software Update Dashboard", "LMAPVote_font01_20", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			self.Frame.Panel01.ChangelogMenu:SetVisible( false )	
 			if ( LMapvote.update.buffer ) then
 				if ( GetGlobalBool( "LMapvote.update.Status", false ) == true ) then
 					if ( LMapvote.update.buffer[ "Server_Status" ] ) then
-						draw.SimpleText( "Server Status - " .. LMapvote.update.buffer[ "Server_Status" ], "LMapVote_font_02", w / 2, h * 0.3 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+						draw.SimpleText( "Server Status - " .. LMapvote.update.buffer[ "Server_Status" ], "LMAPVote_font01_20", w / 2, h * 0.3 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					else
-						draw.SimpleText( "Server Status - OFFLINE :<", "LMapVote_font_02", w / 2, h * 0.3 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+						draw.SimpleText( "Server Status - OFFLINE :<", "LMAPVote_font01_20", w / 2, h * 0.3 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					end
 					
 					if ( LMapvote.update.buffer[ "Latest_Version" ] ) then
-						draw.SimpleText( "Server Latest Version - " .. LMapvote.update.buffer[ "Latest_Version" ] or "Error", "LMapVote_font_03", w / 2, h * 0.3, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+						draw.SimpleText( "Server Latest Version - " .. LMapvote.update.buffer[ "Latest_Version" ] or "Error", "LMAPVote_font01_20", w / 2, h * 0.3, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					end
 					
 					if ( LMapvote.config.Version ) then
-						draw.SimpleText( "Your Version - " .. LMapvote.config.Version or "Error", "LMapVote_font_03", w / 2, h * 0.3 + 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+						draw.SimpleText( "Your Version - " .. LMapvote.config.Version or "Error", "LMAPVote_font01_20", w / 2, h * 0.3 + 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					end
 					
 					if ( LMapvote.update.buffer[ "Latest_Version" ] and LMapvote.config.Version ) then
@@ -147,7 +144,7 @@ function ADMINPANEL:Init( )
 							surface.SetDrawColor( 255, 255, 255, 255 )
 							surface.SetMaterial( Material( "icon16/tick.png" ) )
 							surface.DrawTexturedRect( w / 2, h * 0.5 - 16 / 2, 16, 16 )
-							draw.SimpleText( "Your LMAPVote is latest version, Thank you :)", "LMapVote_font_02", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+							draw.SimpleText( "Your LMAPVote is latest version, Thank you :)", "LMAPVote_font01_15", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 							self.Frame.Panel01.UpdateLink:SetVisible( false )
 							self.Frame.Panel01.CheckUpdate:SetVisible( true )
 							self.Frame.Panel01.ShowChangeLog:SetVisible( true )
@@ -157,7 +154,7 @@ function ADMINPANEL:Init( )
 							surface.SetDrawColor( 255, 255, 255, 255 )
 							surface.SetMaterial( Material( "icon16/error.png" ) )
 							surface.DrawTexturedRect( w / 2, h * 0.5 - 16 / 2, 16, 16 )
-							draw.SimpleText( "You need Update.. :<", "LMapVote_font_02", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+							draw.SimpleText( "You need Update.. :<", "LMAPVote_font01_15", w / 2, h * 0.6, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 							self.Frame.Panel01.UpdateLink:SetVisible( true )
 							self.Frame.Panel01.CheckUpdate:SetVisible( true )
 							self.Frame.Panel01.ShowChangeLog:SetVisible( true )
@@ -171,8 +168,8 @@ function ADMINPANEL:Init( )
 					surface.SetMaterial( Material( "gui/center_gradient" ) )
 					surface.DrawTexturedRect( w / 2 - ( w / 2 ) / 2, h / 2 - 40, w / 2, 25 )
 					
-					draw.SimpleText( "ERROR", "LMapVote_font_06", w / 2, h / 2 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-					draw.SimpleText( "Update check failed - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMapVote_font_02", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+					draw.SimpleText( "ERROR", "LMAPVote_font01_20", w / 2, h / 2 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+					draw.SimpleText( "Update check failed - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMAPVote_font01_15", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 					self.Frame.Panel01.CheckUpdate:SetVisible( true )
 					self.Frame.Panel01.ShowChangeLog:SetVisible( false )
 					self.Frame.Panel01.UpdateLink:SetVisible( false )
@@ -184,11 +181,11 @@ function ADMINPANEL:Init( )
 				surface.SetMaterial( Material( "gui/center_gradient" ) )
 				surface.DrawTexturedRect( w / 2 - ( w / 2 ) / 2, h / 2 - 40, w / 2, 25 )
 				
-				draw.SimpleText( "ERROR", "LMapVote_font_06", w / 2, h / 2 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-				draw.SimpleText( "Update check failed - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMapVote_font_02", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "ERROR", "LMAPVote_font01_20", w / 2, h / 2 - 30, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "Update check failed - " .. GetGlobalString( "LMapvote.update.Reason", "" ), "LMAPVote_font01_15", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			end
 		elseif ( self.Frame.Panel01.ShowType == 2 ) then
-			draw.SimpleText( "Update log", "LMapVote_font_03", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Update log", "LMAPVote_font01_20", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			
 			self.Frame.Panel01.UpdateLink:SetVisible( false )
 			self.Frame.Panel01.CheckUpdate:SetVisible( false )
@@ -199,7 +196,7 @@ function ADMINPANEL:Init( )
 	self.Frame.Panel01.CheckUpdate = vgui.Create( "DButton", self.Frame.Panel01 )
 	self.Frame.Panel01.CheckUpdate:SetSize( self.Frame.Panel01.w - 10, 30 )
 	self.Frame.Panel01.CheckUpdate:SetPos( self.Frame.Panel01.w / 2 - ( self.Frame.Panel01.w - 10 ) / 2, self.Frame.Panel01.h - 70 )
-	self.Frame.Panel01.CheckUpdate:SetFont( "LMapVote_font_03" )
+	self.Frame.Panel01.CheckUpdate:SetFont( "LMAPVote_font01_20" )
 	self.Frame.Panel01.CheckUpdate:SetText( "Check update" )
 	self.Frame.Panel01.CheckUpdate:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.Panel01.CheckUpdate.Block = false
@@ -281,8 +278,8 @@ function ADMINPANEL:Init( )
 	self.Frame.Panel01.UpdateLink = vgui.Create( "DButton", self.Frame.Panel01 )
 	self.Frame.Panel01.UpdateLink:SetSize( self.Frame.Panel01.w - 10, 30 )
 	self.Frame.Panel01.UpdateLink:SetPos( self.Frame.Panel01.w / 2 - ( self.Frame.Panel01.w - 10 ) / 2, self.Frame.Panel01.h - 35 )
-	self.Frame.Panel01.UpdateLink:SetFont( "LMapVote_font_06" )
-	self.Frame.Panel01.UpdateLink:SetText( "Now Update Do Here!" )
+	self.Frame.Panel01.UpdateLink:SetFont( "LMAPVote_font01_20" )
+	self.Frame.Panel01.UpdateLink:SetText( "Update URL" )
 	self.Frame.Panel01.UpdateLink:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.Panel01.UpdateLink.DoClick = function( )
 		LMapvote.PlayButtonSound( )
@@ -295,7 +292,7 @@ function ADMINPANEL:Init( )
 	self.Frame.Panel01.ShowChangeLog = vgui.Create( "DButton", self.Frame.Panel01 )
 	self.Frame.Panel01.ShowChangeLog:SetSize( self.Frame.Panel01.w - 10, 30 )
 	self.Frame.Panel01.ShowChangeLog:SetPos( self.Frame.Panel01.w / 2 - ( self.Frame.Panel01.w - 10 ) / 2, self.Frame.Panel01.h - 105 )
-	self.Frame.Panel01.ShowChangeLog:SetFont( "LMapVote_font_03" )
+	self.Frame.Panel01.ShowChangeLog:SetFont( "LMAPVote_font01_20" )
 	self.Frame.Panel01.ShowChangeLog:SetText( "Show Update log" )
 	self.Frame.Panel01.ShowChangeLog:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.Panel01.ShowChangeLog.DoClick = function( )
@@ -347,7 +344,7 @@ function ADMINPANEL:Init( )
 		draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 215, 215, 215, 235 ) )
 		draw.RoundedBox( 0, 0, h - 1, w, 1, Color( 215, 215, 215, 235 ) )
 		
-		draw.SimpleText( "Map List Dashboard", "LMapVote_font_03", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Map List Dashboard", "LMAPVote_font01_20", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 	
 	self.Frame.Panel02.MaplistMenu = vgui.Create( "DPanelList", self.Frame.Panel02 )
@@ -384,7 +381,7 @@ function ADMINPANEL:Init( )
 		draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 215, 215, 215, 235 ) )
 		draw.RoundedBox( 0, 0, h - 1, w, 1, Color( 215, 215, 215, 235 ) )
 		
-		draw.SimpleText( "Vote Status Dashboard", "LMapVote_font_03", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Vote Status Dashboard", "LMAPVote_font01_20", 15, 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		
 		if ( LMapvote.system.vote.GetStatus( ) == true ) then
 			if ( self.Frame.Panel03.CurrRotated <= 360 ) then
@@ -395,18 +392,18 @@ function ADMINPANEL:Init( )
 			draw.NoTexture( )
 			surface.SetDrawColor( 100, 255, 100, 255 )
 			LMapvote.geometry.DrawCircle( 50, h * 0.3, 10, 3, 90, self.Frame.Panel03.CurrRotated, 100 )
-			draw.SimpleText( "Vote has currently progressing.", "LMapVote_font_06", w / 2, h * 0.3, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-			draw.SimpleText( string.ToMinutesSeconds( LMapvote.system.vote.GetTimeLeft( ) ) .. " after do map vote finished.", "LMapVote_font_03", w / 2, h * 0.5, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Vote has currently progressing.", "LMAPVote_font01_20", w / 2, h * 0.3, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.SimpleText( string.ToMinutesSeconds( LMapvote.system.vote.GetTimeLeft( ) ) .. " after do map vote finished.", "LMAPVote_font01_20", w / 2, h * 0.5, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		else
 			self.Frame.Panel03.CurrRotated = 0
-			draw.SimpleText( "Vote has not currently progressing.", "LMapVote_font_06", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Vote has not currently progressing.", "LMAPVote_font01_20", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 	end
 	
 	self.Frame.Panel03.Vote = vgui.Create( "DButton", self.Frame.Panel03 )
 	self.Frame.Panel03.Vote:SetSize( self.Frame.Panel03.w - 10, 30 )
 	self.Frame.Panel03.Vote:SetPos( self.Frame.Panel03.w / 2 - ( self.Frame.Panel03.w - 10 ) / 2, self.Frame.Panel03.h - 35 )
-	self.Frame.Panel03.Vote:SetFont( "LMapVote_font_06" )
+	self.Frame.Panel03.Vote:SetFont( "LMAPVote_font01_20" )
 	self.Frame.Panel03.Vote:SetText( "" )
 	self.Frame.Panel03.Vote:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.Panel03.Vote.DoClick = function( )
@@ -430,30 +427,29 @@ function ADMINPANEL:Init( )
 	self.Frame.Contact:SetPos( 30 + self.w * 0.15, self.h - 40 )
 	self.Frame.Contact:SetSize( self.w * 0.15, 30 )
 	self.Frame.Contact:SetText( "Contact ME :)" )
-	self.Frame.Contact:SetFont( "LMapVote_font_02" )
+	self.Frame.Contact:SetFont( "LMAPVote_font01_20" )
 	self.Frame.Contact:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.Contact.Paint = function( pnl, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 15 ) )
 	end
 	self.Frame.Contact.DoClick = function( )
 		LMapvote.PlayButtonSound( )
-		LMapvote.derma.message( "Thanks for using LMAPVote, i always thanks by yours!", "Thanks", ":) .." )
+		LMapvote.derma.message( "Thanks for using LMAPVote, I always thanks by yours!", "Thanks", "OK" )
 		gui.OpenURL( "http://steamcommunity.com/profiles/76561198011675377" )
 	end
 
 	self.Frame.CloseButton = vgui.Create( "DButton", self.Frame )
 	self.Frame.CloseButton:SetPos( 15, self.h - 40 )
 	self.Frame.CloseButton:SetSize( self.w * 0.15, 30 )
-	self.Frame.CloseButton:SetText( "Logout" )
-	self.Frame.CloseButton:SetFont( "LMapVote_font_02" )
+	self.Frame.CloseButton:SetText( "Close" )
+	self.Frame.CloseButton:SetFont( "LMAPVote_font01_20" )
 	self.Frame.CloseButton:SetColor( Color( 0, 0, 0, 255 ) )
 	self.Frame.CloseButton.Paint = function( pnl, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 150, 150, 100 ) )
 	end
 	self.Frame.CloseButton.DoClick = function( )
 		LMapvote.PlayButtonSound( )
-		self.Frame:Remove( )
-		self.Frame = nil
+		self:Close( )
 	end
 	
 	self:Refresh_Maplist( )
@@ -478,26 +474,29 @@ function ADMINPANEL:Refresh_Changelog( )
 		panel.Paint = function( pnl, w, h )
 			surface.SetDrawColor( 0, 0, 0, 255 )
 			surface.SetMaterial( Material( "gui/gradient" ) )
-			surface.DrawTexturedRect( 0, h - 1, w, 1 )
+			surface.DrawTexturedRect( 0, h - 1, w * 0.8, 1 )
 							
 			if ( value.status == "0" ) then
 				draw.RoundedBox( 0, w - 75, 0, 75, h, Color( 0, 0, 0, 150 ) )
-				draw.SimpleText( "Release", "LMapVote_font_02", w - 10, h / 2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )				
+				draw.SimpleText( "Release", "LMAPVote_font01_20", w - 10, h / 2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )				
 			elseif ( value.status == "1" ) then
 				draw.RoundedBox( 0, w - 50, 0, 50, h, Color( 255, 255, 150, 100 ) )
-				draw.SimpleText( "Add", "LMapVote_font_02", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "Add", "LMAPVote_font01_20", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 			elseif ( value.status == "2" ) then
 				draw.RoundedBox( 0, w - 40, 0, 40, h, Color( 255, 150, 150, 100 ) )
-				draw.SimpleText( "Fix", "LMapVote_font_02", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )		
+				draw.SimpleText( "Fix", "LMAPVote_font01_20", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )		
 			elseif ( value.status == "3" ) then
 				draw.RoundedBox( 0, w - 75, 0, 75, h, Color( 255, 150, 255, 100 ) )
-				draw.SimpleText( "Module", "LMapVote_font_02", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )	
+				draw.SimpleText( "Module", "LMAPVote_font01_20", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )	
 			elseif ( value.status == "4" ) then
 				draw.RoundedBox( 0, w - 95, 0, 95, h, Color( 0, 255, 255, 100 ) )
-				draw.SimpleText( "UI Change", "LMapVote_font_02", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )					
+				draw.SimpleText( "UI Change", "LMAPVote_font01_20", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			elseif ( value.status == "5" ) then
+				draw.RoundedBox( 0, w - 75, 0, 75, h, Color( 0, 255, 150, 100 ) )
+				draw.SimpleText( "Change", "LMAPVote_font01_20", w - 10, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 			end
 			
-			draw.SimpleText( key .. ". - " .. value.text, "LMapVote_font_04", 5, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( key .. ". " .. value.text, "LMAPVote_font01_15", 5, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		end
 		
 		self.Frame.Panel01.ChangelogMenu:AddItem( panel )
@@ -549,16 +548,24 @@ function ADMINPANEL:Refresh_Maplist( )
 					surface.SetMaterial( Material( value.Image ) )
 					surface.DrawTexturedRect( 0, 0, w, h )			
 				elseif ( imageTable[ value.Name ] == 0 ) then
-					draw.SimpleText( "No map icon :/", "LMapVote_font_04", w / 2, h / 2 - ( 20 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+					draw.SimpleText( "No map icon :/", "LMAPVote_font01_15", w / 2, h / 2 - ( 20 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 				end
 			end
 
 			draw.RoundedBox( 0, 0, h - 20, w, 20, Color( 0, 0, 0, 100 ) )
-			draw.SimpleText( value.Name, "LMapVote_font_04", w / 2, h - ( 20 / 2 ), Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.SimpleText( value.Name, "LMAPVote_font01_15", w / 2, h - ( 20 / 2 ), Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 		
 		self.Frame.Panel02.MaplistMenu:AddItem( panel )
 	end
+end
+
+function ADMINPANEL:Close( )
+	if ( !self ) then return end
+	if ( !self.Frame ) then return end
+	self.Frame:Remove( )
+	self.Frame = nil
+	LMapvote.panel.adminPanel = nil
 end
 
 vgui.Register( "LMapVote_ADMIN", ADMINPANEL, "Panel" )

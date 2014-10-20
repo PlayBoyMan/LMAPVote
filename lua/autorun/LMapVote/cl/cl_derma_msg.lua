@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.4
+	LMAPVote - 1.5
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -16,7 +16,7 @@ function LMapvote.derma.message( msg, title, okstr )
 	LMapvote.derma.msg = vgui.Create( "DFrame" )
 	
 	LMapvote.derma.msg.w = ScrW( )
-	LMapvote.derma.msg.h = ScrH( ) * 0.25
+	LMapvote.derma.msg.h = ScrH( ) * 0.1
 	LMapvote.derma.msg.x = ScrW( ) / 2 - LMapvote.derma.msg.w / 2
 	LMapvote.derma.msg.y = ScrH( ) / 2 - LMapvote.derma.msg.h / 2	
 
@@ -28,23 +28,16 @@ function LMapvote.derma.message( msg, title, okstr )
 	LMapvote.derma.msg:MakePopup( )
 	LMapvote.derma.msg.Paint = function( pnl, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 255, 255, 235 ) )
-
-		surface.SetDrawColor( 150, 150, 150, 20 )
-		surface.SetMaterial( Material( "gui/center_gradient" ) )
-		surface.DrawTexturedRect( w / 2 - ( w * 0.8 ) / 2, -1, w * 0.8, 25 )
-		
-		draw.SimpleText( title or "LMAPVote Message", "LMapVote_font_08", w / 2, 10, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		draw.SimpleText( msg or "Message", "LMapVote_font_09", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( msg or "Message", "LMAPVote_font02_25", w * 0.2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 	
 	LMapvote.derma.msg.OK = vgui.Create( "DButton", LMapvote.derma.msg )
-	LMapvote.derma.msg.OK:SetPos( LMapvote.derma.msg.w / 2 - ( LMapvote.derma.msg.w * 0.15 ) / 2, LMapvote.derma.msg.h - 40 )
-	LMapvote.derma.msg.OK:SetSize( LMapvote.derma.msg.w * 0.15, 30 )
+	LMapvote.derma.msg.OK:SetSize( surface.GetTextSize( okstr ) + 15, 20 )
 	LMapvote.derma.msg.OK:SetText( okstr or "OK" )
-	LMapvote.derma.msg.OK:SetFont( "LMapVote_font_02" )
+	LMapvote.derma.msg.OK:SetFont( "LMAPVote_font01_20" )
 	LMapvote.derma.msg.OK:SetColor( Color( 0, 0, 0, 255 ) )
 	LMapvote.derma.msg.OK.Paint = function( pnl, w, h )
-		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 150, 150, 100 ) )
+		draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 8 ) )
 	end
 	LMapvote.derma.msg.OK.DoClick = function( )
 		LMapvote.PlayButtonSound( )
@@ -53,8 +46,9 @@ function LMapvote.derma.message( msg, title, okstr )
 			LMapvote.derma.msg = nil
 		end
 	end
+	
+	LMapvote.derma.msg.OK:SetPos( LMapvote.derma.msg.w - LMapvote.derma.msg.OK:GetWide( ) - 10, LMapvote.derma.msg.h - 30 )
 end
-
 
 function LMapvote.derma.queryMSG( query, title, okstr, nostr, okFunc, noFunc )
 	if ( LMapvote.derma.query ) then
@@ -67,7 +61,7 @@ function LMapvote.derma.queryMSG( query, title, okstr, nostr, okFunc, noFunc )
 	LMapvote.derma.query = vgui.Create( "DFrame", LMapvote.derma.query_back )
 	
 	LMapvote.derma.query.w = ScrW( )
-	LMapvote.derma.query.h = ScrH( ) * 0.25
+	LMapvote.derma.query.h = ScrH( ) * 0.1
 	LMapvote.derma.query.x = ScrW( ) / 2 - LMapvote.derma.query.w / 2
 	LMapvote.derma.query.y = ScrH( ) / 2 - LMapvote.derma.query.h / 2	
 
@@ -79,20 +73,13 @@ function LMapvote.derma.queryMSG( query, title, okstr, nostr, okFunc, noFunc )
 	LMapvote.derma.query:MakePopup( )
 	LMapvote.derma.query.Paint = function( pnl, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 255, 255, 235 ) )
-
-		surface.SetDrawColor( 150, 150, 150, 20 )
-		surface.SetMaterial( Material( "gui/center_gradient" ) )
-		surface.DrawTexturedRect( w / 2 - ( w * 0.8 ) / 2, -1, w * 0.8, 25 )
-		
-		draw.SimpleText( title or "LMAPVote Message", "LMapVote_font_08", w / 2, 10, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		draw.SimpleText( query or "Message", "LMapVote_font_07", w / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( query or "Message", "LMAPVote_font02_25", w * 0.2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 	
 	LMapvote.derma.query.OK = vgui.Create( "DButton", LMapvote.derma.query )
-	LMapvote.derma.query.OK:SetPos( LMapvote.derma.query.w * 0.3, LMapvote.derma.query.h - 40 )
-	LMapvote.derma.query.OK:SetSize( LMapvote.derma.query.w * 0.15, 30 )
+	LMapvote.derma.query.OK:SetSize( surface.GetTextSize( okstr ) + 15, 20 )
 	LMapvote.derma.query.OK:SetText( okstr or "OK" )
-	LMapvote.derma.query.OK:SetFont( "LMapVote_font_02" )
+	LMapvote.derma.query.OK:SetFont( "LMAPVote_font01_20" )
 	LMapvote.derma.query.OK:SetColor( Color( 0, 0, 0, 255 ) )
 	LMapvote.derma.query.OK.Paint = function( pnl, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 8 ) )
@@ -109,10 +96,9 @@ function LMapvote.derma.queryMSG( query, title, okstr, nostr, okFunc, noFunc )
 	end
 	
 	LMapvote.derma.query.NO = vgui.Create( "DButton", LMapvote.derma.query )
-	LMapvote.derma.query.NO:SetPos( LMapvote.derma.query.w * 0.55, LMapvote.derma.query.h - 40 )
-	LMapvote.derma.query.NO:SetSize( LMapvote.derma.query.w * 0.15, 30 )
+	LMapvote.derma.query.NO:SetSize( surface.GetTextSize( nostr ) + 15, 20 )
 	LMapvote.derma.query.NO:SetText( nostr or "NO" )
-	LMapvote.derma.query.NO:SetFont( "LMapVote_font_02" )
+	LMapvote.derma.query.NO:SetFont( "LMAPVote_font01_20" )
 	LMapvote.derma.query.NO:SetColor( Color( 0, 0, 0, 255 ) )
 	LMapvote.derma.query.NO.Paint = function( pnl, w, h )
 		draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 150, 150, 100 ) )
@@ -127,4 +113,7 @@ function LMapvote.derma.queryMSG( query, title, okstr, nostr, okFunc, noFunc )
 			LMapvote.derma.query = nil
 		end
 	end
+	
+	LMapvote.derma.query.OK:SetPos( LMapvote.derma.query.w - LMapvote.derma.query.OK:GetWide( ) - LMapvote.derma.query.NO:GetWide( ) - 30, LMapvote.derma.query.h - 30 )
+	LMapvote.derma.query.NO:SetPos( LMapvote.derma.query.w - LMapvote.derma.query.NO:GetWide( ) - 10, LMapvote.derma.query.h - 30 )
 end
