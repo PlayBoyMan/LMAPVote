@@ -1,11 +1,11 @@
 --[[
-	LMAPVote - 1.5.2
+	LMAPVote - 1.5
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
 LMapvote.config = LMapvote.config or { }
 
-LMapvote.config.Version = "1.5.2" -- Do not edit this. ;>
+LMapvote.config.Version = "1.5" -- Do not edit this. ;>
 
 --[[
 	How can i change command and other permission?
