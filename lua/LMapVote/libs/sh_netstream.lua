@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.5
+	LMAPVote - 1.5.3
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -34,12 +34,12 @@
 local type, error, pcall, pairs, AddCSLuaFile, require, _player = type, error, pcall, pairs, AddCSLuaFile, require, player
 
 if (!von) then
-	AddCSLuaFile( "libs/sh_von.lua" )
-	include( "libs/sh_von.lua" )
+	AddCSLuaFile( "sh_von.lua" )
+	include( "sh_von.lua" )
 end;
 
-netstream = {};
-netstream.stored = {};
+netstream = netstream or {};
+netstream.stored = netstream.stored or {};
 
 -- A function to hook a data stream.
 function netstream.Hook(name, Callback)

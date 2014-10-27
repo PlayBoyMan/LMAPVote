@@ -1,5 +1,5 @@
 --[[
-	LMAPVote - 1.5
+	LMAPVote - 1.5.3
 	Copyright ( C ) 2014 ~ L7D
 --]]
 
@@ -69,23 +69,23 @@ end
 
 function LMapvote.kernel.IncludeFolder( folder )
 	if ( !folder ) then return end
-	local find = file.Find( "autorun/LMapvote/" .. folder .. "/*.lua", "LUA" ) or nil
+	local find = file.Find( "LMapvote/" .. folder .. "/*.lua", "LUA" ) or nil
 	if ( !find ) then return end
 	for key, value in pairs( find ) do
 		if ( string.find( value, "sv_" ) and SERVER ) then
-			include( "autorun/LMapvote/" .. folder .. "/" .. value )
+			include( "LMapvote/" .. folder .. "/" .. value )
 		elseif ( string.find( value, "sh_" ) ) then
-			AddCSLuaFile( "autorun/LMapvote/" .. folder .. "/" .. value )
+			AddCSLuaFile( "LMapvote/" .. folder .. "/" .. value )
 			if ( SERVER ) then
-				include( "autorun/LMapvote/" .. folder .. "/" .. value )
+				include( "LMapvote/" .. folder .. "/" .. value )
 			else
-				include( "autorun/LMapvote/" .. folder .. "/" .. value )
+				include( "LMapvote/" .. folder .. "/" .. value )
 			end
 		elseif ( string.find( value, "cl_" ) ) then
 			if ( SERVER ) then
-				AddCSLuaFile( "autorun/LMapvote/" .. folder .. "/" .. value )
+				AddCSLuaFile( "LMapvote/" .. folder .. "/" .. value )
 			else
-				include( "autorun/LMapvote/" .. folder .. "/" .. value )
+				include( "LMapvote/" .. folder .. "/" .. value )
 			end
 		end
 	end
@@ -94,9 +94,17 @@ end
 LMapvote.kernel.Include( "sh_config.lua" )
 LMapvote.kernel.Include( "libs/sh_von.lua" )
 LMapvote.kernel.Include( "libs/sh_netstream.lua" )
-LMapvote.kernel.IncludeFolder( "system" )
-LMapvote.kernel.IncludeFolder( "cl" )
-LMapvote.kernel.IncludeFolder( "vgui" )
+
+LMapvote.kernel.Include( "system/sh_vote_core.lua" )
+LMapvote.kernel.Include( "system/sh_maps.lua" )
+LMapvote.kernel.Include( "system/sh_update.lua" )
+
+LMapvote.kernel.Include( "cl/cl_derma_msg.lua" )
+LMapvote.kernel.Include( "cl/cl_font.lua" )
+LMapvote.kernel.Include( "cl/cl_geometry.lua" )
+
+LMapvote.kernel.Include( "vgui/cl_adminPanel.lua" )
+LMapvote.kernel.Include( "vgui/cl_votePanel.lua" )
 
 LMapvote.kernel.Print( LMapvote.rgb.Green, "LMAPVote loaded, Version - " .. LMapvote.config.Version )
-LMapvote.kernel.Print( LMapvote.rgb.Green, "LMAPVote By L7D." )
+LMapvote.kernel.Print( LMapvote.rgb.Green, "= Copyright\n* LMAPVote by 'L7D'\n* Netstream by 'Alexander Grist-Hucker'\n* vON by 'Alexandru-Mihai Maftei'" )
