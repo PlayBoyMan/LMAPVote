@@ -1,6 +1,6 @@
 --[[
-	LMAPVote - 1.5.3
-	Copyright ( C ) 2014 ~ L7D
+	LMAPVote - 1.6
+	Copyright ( C ) 2015 ~ L7D
 --]]
 
 LMapvote.geometry = LMapvote.geometry or { }
@@ -12,7 +12,6 @@ LMapvote.geometry = LMapvote.geometry or { }
 	Author : https://github.com/BlackVoid
 	Thanks 'BlackVoid', i like you.
 --]]
-
 function LMapvote.geometry.GeneratePolyBarTII( x, y, width, height, mod )
 	mod = mod or 15
 	Poly = { }

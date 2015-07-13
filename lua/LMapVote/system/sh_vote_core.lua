@@ -1,9 +1,8 @@
 --[[
-	LMAPVote - 1.5.3
-	Copyright ( C ) 2014 ~ L7D
+	LMAPVote - 1.6
+	Copyright ( C ) 2015 ~ L7D
 --]]
-LMapvote.system.vote = LMapvote.system.vote or { }
-
+LMapvote.system.vote = LMapvote.system.vote or { coreTable = { } }
 LMAPVOTE_SYNC_ENUM__ALL = 1
 LMAPVOTE_SYNC_ENUM__PROGRESSONLY = 2
 LMAPVOTE_SYNC_ENUM__CHATONLY = 3
@@ -11,122 +10,105 @@ LMAPVOTE_SYNC_ENUM__PROGRESSALL = 4
 LMAPVOTE_SYNC_ENUM__VOICEONLY = 5
 
 function LMapvote.system.vote.Sync( enum, tab )
-	if ( !enum or !LMapvote.system.vote.GetStatus( ) ) then
+	if ( !enum or !LMapvote.system.vote.GetStatus( ) or !LMapvote.system.vote.coreTable ) then
 		return
 	end
 
 	local function enum1_func( )
-		if ( !LMapvote.system.vote.coreTable ) then return end
-		for _, ent in pairs( player.GetAll( ) ) do
-			netstream.Start(
-				ent, 
-				"LMapvote.system.vote.sync",
-				{ Type = enum, Table = LMapvote.system.vote.coreTable }
-			)
-		end
+		netstream.Start( nil, "LMapvote.system.vote.sync", {
+			Type = enum,
+			Table = LMapvote.system.vote.coreTable
+		} )
 	end
 	
 	local function enum2_func( )
-		if ( !LMapvote.system.vote.coreTable ) then return end
-		for _, ent in pairs( player.GetAll( ) ) do
-			netstream.Start(
-				ent, 
-				"LMapvote.system.vote.sync",
-				{ Type = 2, Table = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] }
-			)
-		end
+		netstream.Start( nil, "LMapvote.system.vote.sync", {
+			Type = 2,
+			Table = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ]
+		} )
 	end
 	
 	local function enum3_func( caller, text )
-		if ( !LMapvote.system.vote.coreTable ) then return end
 		LMapvote.system.vote.coreTable[ "Chat" ][ #LMapvote.system.vote.coreTable[ "Chat" ] + 1 ] = {
 			caller = caller,
 			text = text
 		}
-		for _, ent in pairs( player.GetAll( ) ) do
-			netstream.Start(
-				ent, 
-				"LMapvote.system.vote.sync",
-				{ Type = 3, Table = LMapvote.system.vote.coreTable[ "Chat" ] }
-			)
-		end
+		
+		netstream.Start( nil, "LMapvote.system.vote.sync", {
+			Type = 3,
+			Table = LMapvote.system.vote.coreTable[ "Chat" ]
+		} )
 	end
 	
 	local function enum4_func( caller, map )
-		if ( !LMapvote.system.vote.coreTable ) then return end
-		if ( map and type( map ) == "string" ) then
-			local work_co = 0
-			local count = 0
-			for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-				if ( key ) then
-					count = count + 1
+		if ( !map or type( map ) != "string" ) then return end
+		local work_co = 0
+		local count = table.Count( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] )
+
+		for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
+			work_co = work_co + 1
+			
+			for key2, value2 in pairs( value.Voter ) do
+				if ( value2 == caller ) then
+					table.remove( value.Voter, key2 )
+					value.Count = value.Count - 1
 				end
 			end
-			for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-				work_co = work_co + 1
-				for i = 1, #value.Voter do
-					if ( value.Voter[ i ] == caller ) then
-						table.remove( value.Voter, i )
-						value.Count = value.Count - 1
-					end
-				end
-				if ( work_co == count ) then
-					LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][ map ].Voter[ #LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][ map ].Voter + 1 ] = caller
-					LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][ map ].Count = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][ map ].Count + 1
-					for _, ent in pairs( player.GetAll( ) ) do
-						netstream.Start(
-							ent, 
-							"LMapvote.system.vote.sync",
-							{ Type = 5, Table = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] }
-						)
-					end
-					return
-				end
+			
+			if ( work_co == count ) then
+				LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][ map ].Voter[ #LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][ map ].Voter + 1 ] = caller
+				LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][ map ].Count = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ][ map ].Count + 1
+				
+				netstream.Start( nil, "LMapvote.system.vote.sync", {
+					Type = 5,
+					Table = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ]
+				} )
+				
+				return
 			end
-		else
-			return
 		end
 	end
 	
 	local function enum5_func( ent, bool )
-		if ( LMapvote.system.vote.coreTable ) then
-			if ( bool ) then
-				for i = 1, #LMapvote.system.vote.coreTable[ "Voice" ] do
-					if ( LMapvote.system.vote.coreTable[ "Voice" ][ i ] == ent ) then
-						LMapvote.system.vote.coreTable[ "Voice" ][ i ] = nil
-					end
-				end
-				LMapvote.system.vote.coreTable[ "Voice" ][ #LMapvote.system.vote.coreTable[ "Voice" ] + 1 ] = ent
-			else
-				for i = 1, #LMapvote.system.vote.coreTable[ "Voice" ] do
-					if ( LMapvote.system.vote.coreTable[ "Voice" ][ i ] == ent ) then
-						LMapvote.system.vote.coreTable[ "Voice" ][ i ] = nil
-					end
+		if ( bool ) then
+			for key, value in pairs( LMapvote.system.vote.coreTable[ "Voice" ] ) do
+				if ( value == ent ) then
+					table.remove( LMapvote.system.vote.coreTable[ "Voice" ], key )
 				end
 			end
-			for _, ent in pairs( player.GetAll( ) ) do
-				netstream.Start(
-					ent, 
-					"LMapvote.system.vote.sync",
-					{ Type = 6, Table = LMapvote.system.vote.coreTable[ "Voice" ] }
-				)
+
+			LMapvote.system.vote.coreTable[ "Voice" ][ #LMapvote.system.vote.coreTable[ "Voice" ] + 1 ] = ent
+		else
+			for key, value in pairs( LMapvote.system.vote.coreTable[ "Voice" ] ) do
+				if ( value == ent ) then
+					table.remove( LMapvote.system.vote.coreTable[ "Voice" ], key )
+				end
 			end
 		end
+		
+		netstream.Start( nil, "LMapvote.system.vote.sync", {
+			Type = 6,
+			Table = LMapvote.system.vote.coreTable[ "Voice" ]
+		} )
 	end
 
 	if ( SERVER ) then
 		netstream.Hook( "LMapvote.system.vote.sync_type1_toserver", function( )
 			enum1_func( )
 		end )
+		
 		netstream.Hook( "LMapvote.system.vote.sync_type2_toserver", function( )
 			enum2_func( )
 		end )
+		
 		netstream.Hook( "LMapvote.system.vote.sync_type3_toserver", function( caller, data )
 			enum3_func( caller, data )
 		end )
+		
 		netstream.Hook( "LMapvote.system.vote.sync_type4_toserver", function( caller, data )
 			enum4_func( data[1], data[2] )
 		end )
+		
 		netstream.Hook( "LMapvote.system.vote.sync_type5_toserver", function( caller, data )
 			enum5_func( data[1], data[2] )
 		end )
@@ -174,8 +156,6 @@ function LMapvote.system.vote.GetStatus( )
 end
 
 if ( SERVER ) then
-	LMapvote.system.vote.coreTable = LMapvote.system.vote.coreTable or { }
-	
 	function LMapvote.system.vote.SetStatus( status )
 		SetGlobalBool( "LMapvote.system.vote.Status", status )
 	end
@@ -205,9 +185,16 @@ if ( SERVER ) then
 		
 		local function mapFileProgress( )
 			local mapFileCache = { }
+			
 			for key, value in pairs( LMapvote.map.buffer ) do
-				mapFileCache[ #mapFileCache + 1 ] = { Dir = "maps/" .. value.Name .. ".bsp", Dir_noext = "maps/" .. value.Name, Name = value.Name, Image = value.Image }
+				mapFileCache[ #mapFileCache + 1 ] = {
+					Dir = "maps/" .. value.Name .. ".bsp",
+					Dir_noext = "maps/" .. value.Name,
+					Name = value.Name,
+					Image = value.Image
+				}
 			end
+			
 			LMapvote.system.vote.coreTable[ "MapList" ] = mapFileCache
 		end
 		
@@ -222,14 +209,7 @@ if ( SERVER ) then
 		end
 		
 		LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__ALL )
-		
-		for _, ent in pairs( player.GetAll( ) ) do
-			netstream.Start(
-				ent, 
-				"LMapvote.system.vote.PanelCall",
-				1
-			)
-		end
+		netstream.Start( nil, "LMapvote.system.vote.PanelCall", 1 )
 		
 		local current_receiver = 0
 		local wonMap = ""
@@ -240,20 +220,22 @@ if ( SERVER ) then
 				timer.Destroy( "LMapvote.system.vote.Timer" )
 				return
 			end
+			
 			if ( GetGlobalInt( "LMapvote.system.vote.Timer" ) == 0 ) then
 				local player_Count = 0
 				
 				if ( !runinit ) then
 					local winnerMap = LMapvote.system.vote.GetWinnerMap( )
+					
 					for _, ent in pairs( player.GetAll( ) ) do
 						if ( !ent:IsBot( ) ) then
-							netstream.Start(
-								ent, 
-								"LMapvote.system.vote.ResultSend",
-								{ Won = winnerMap.map, Count = winnerMap.count }
-							)
+							netstream.Start( ent, "LMapvote.system.vote.ResultSend", {
+								Won = winnerMap.map,
+								Count = winnerMap.count
+							} )
 						end
 					end
+					
 					runinit = true
 				end
 
@@ -266,7 +248,7 @@ if ( SERVER ) then
 				end )
 
 				for _, ent in pairs( player.GetAll( ) ) do
-					if ( IsValid( ent ) and ( !ent:IsBot( ) ) ) then
+					if ( IsValid( ent ) and !ent:IsBot( ) ) then
 						player_Count = player_Count + 1
 					end
 				end
@@ -274,67 +256,64 @@ if ( SERVER ) then
 				if ( current_receiver >= player_Count ) then
 					SetGlobalInt( "LMapvote.system.vote.Timer", tonumber( LMapvote.config.VoteTime ) )
 					LMapvote.system.vote.SetStatus( false )
+					
 					for _, ent in pairs( player.GetAll( ) ) do
-						if ( IsValid( ent ) ) then
-							if ( !ent:IsBot( ) ) then
-								netstream.Start(
-									ent, 
-									"LMapvote.system.vote.StopCall",
-									1
-								)
-							end
+						if ( IsValid( ent ) and !ent:IsBot( ) ) then
+							netstream.Start( ent, "LMapvote.system.vote.StopCall", 1 )
 						end
 					end
+					
 					RunConsoleCommand( "changelevel", wonMap )
-					if ( timer.Exists( "LMapvote.system.vote.ForceChangeLevel" ) ) then
-						timer.Destroy( "LMapvote.system.vote.ForceChangeLevel" )
-						return
-					end
+					
+					timer.Destroy( "LMapvote.system.vote.ForceChangeLevel" )
 				end
 				
 				timer.Create( "LMapvote.system.vote.ForceChangeLevel", 10, 1, function( )
 					SetGlobalInt( "LMapvote.system.vote.Timer", tonumber( LMapvote.config.VoteTime ) )
 					LMapvote.system.vote.SetStatus( false )
+					
 					for _, ent in pairs( player.GetAll( ) ) do
-						if ( IsValid( ent ) ) then
-							if ( !ent:IsBot( ) ) then
-								netstream.Start(
-									ent, 
-									"LMapvote.system.vote.StopCall",
-									1
-								)
-							end
+						if ( IsValid( ent ) and !ent:IsBot( ) ) then
+							netstream.Start( ent, "LMapvote.system.vote.StopCall", 1 )
 						end
 					end
+					
 					RunConsoleCommand( "changelevel", wonMap )
-					if ( timer.Exists( "LMapvote.system.vote.ForceChangeLevel" ) ) then
-						timer.Destroy( "LMapvote.system.vote.ForceChangeLevel" )
-					end
+					timer.Destroy( "LMapvote.system.vote.ForceChangeLevel" )
 				end )
-				
 			end
+			
 			if ( GetGlobalInt( "LMapvote.system.vote.Timer" ) > 0 ) then
 				SetGlobalInt( "LMapvote.system.vote.Timer", GetGlobalInt( "LMapvote.system.vote.Timer" ) - 1 )
 			end
 		end )
-		
-		return nil
 	end
 	
 	function LMapvote.system.vote.GetWinnerMap( )
-		if ( !LMapvote.system.vote.coreTable ) then return { count = 0, map = game.GetMap( ) } end
-		if ( !LMapvote.system.vote.GetStatus( ) ) then return { count = 0, map = game.GetMap( ) } end
+		if ( !LMapvote.system.vote.coreTable or !LMapvote.system.vote.GetStatus( ) ) then
+			return {
+				count = 0,
+				map = game.GetMap( )
+			}
+		end
+		
 		local buffer = { }
 		local notzero = false
+		
 		for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-			buffer[ #buffer + 1 ] = { map = key, count = value.Count }
+			buffer[ #buffer + 1 ] = {
+				map = key,
+				count = value.Count
+			}
 		end
+		
 		for i = 1, #buffer do
 			if ( buffer[ i ].count == 0 ) then
-				if ( i == #buffer ) then
-					if ( !notzero ) then
-						return { count = 0, map = game.GetMap( ) }
-					end
+				if ( i == #buffer and !notzero ) then
+					return {
+						count = 0,
+						map = game.GetMap( )
+					}
 				end
 			else
 				notzero = true
@@ -346,56 +325,57 @@ if ( SERVER ) then
 		end )
 		
 		if ( !buffer[ 1 ] ) then
-			return { count = 0, map = game.GetMap( ) }
+			return {
+				count = 0,
+				map = game.GetMap( )
+			}
 		end
 
-		return { count = buffer[ 1 ].count, map = buffer[ 1 ].map }
+		return {
+			count = buffer[ 1 ].count,
+			map = buffer[ 1 ].map
+		}
 	end
 
 	function LMapvote.system.vote.Stop( )
-		if ( !LMapvote.system.vote.GetStatus( ) ) then return "Vote has not currently progressing." end
-		if ( timer.Exists( "LMapvote.system.vote.Timer" ) ) then timer.Destroy( "LMapvote.system.vote.Timer" )	end
+		if ( !LMapvote.system.vote.GetStatus( ) ) then
+			return "Vote has not currently progressing."
+		end
+		
+		timer.Destroy( "LMapvote.system.vote.Timer" )
 		SetGlobalInt( "LMapvote.system.vote.Timer", tonumber( LMapvote.config.VoteTime ) )
 		LMapvote.system.vote.SetStatus( false )
 		LMapvote.system.vote.coreTable = { }
 		LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__ALL )
-		
-		for _, ent in pairs( player.GetAll( ) ) do
-			netstream.Start(
-				ent, 
-				"LMapvote.system.vote.StopCall",
-				1
-			)
-		end
-		return nil
+
+		netstream.Start( nil, "LMapvote.system.vote.StopCall", 1 )
 	end
 
 	hook.Add( "PlayerInitialSpawn", "LMapvote.system.vote.PlayerInitialSpawn", function( pl )
-		LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__ALL )
 		if ( LMapvote.system.vote.GetStatus( ) ) then
-			netstream.Start(
-				pl, 
-				"LMapvote.system.vote.PanelCall",
-				1
-			)
+			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__ALL )
+			
+			netstream.Start( pl, "LMapvote.system.vote.PanelCall", 1 )
 		end
 	end )
 
 	concommand.Add( "LMapVote_vote_start", function( pl )
 		if ( IsValid( pl ) ) then
 			if ( LMapvote.config.HavePermission( pl ) ) then
-				local run = LMapvote.system.vote.Start( )
-				if ( run ) then
-					pl:ChatPrint( run )
+				local result = LMapvote.system.vote.Start( )
+				
+				if ( result ) then
+					pl:ChatPrint( result )
 				end
 			else
 				pl:ChatPrint( "You don't have permission do this command." )
 				return
 			end
 		else
-			local run = LMapvote.system.vote.Start( )
-			if ( run ) then
-				LMapvote.kernel.Print( LMapvote.rgb.Red, run )
+			local result = LMapvote.system.vote.Start( )
+			
+			if ( result ) then
+				LMapvote.kernel.Print( LMapvote.rgb.Red, result )
 			end
 		end
 	end )
@@ -403,28 +383,30 @@ if ( SERVER ) then
 	concommand.Add( "LMapVote_vote_stop", function( pl )
 		if ( IsValid( pl ) ) then
 			if ( LMapvote.config.HavePermission( pl ) ) then
-				local run = LMapvote.system.vote.Stop( )
-				if ( run ) then
-					pl:ChatPrint( run )
+				local result = LMapvote.system.vote.Stop( )
+				
+				if ( result ) then
+					pl:ChatPrint( result )
 				end
 			else
 				pl:ChatPrint( "You don't have permission do this command." )
 				return
 			end
 		else
-			local run = LMapvote.system.vote.Stop( )
-			if ( run ) then
-				LMapvote.kernel.Print( LMapvote.rgb.Red, run )
+			local result = LMapvote.system.vote.Stop( )
+			
+			if ( result ) then
+				LMapvote.kernel.Print( LMapvote.rgb.Red, result )
 			end
 		end
 	end )
 else
-	LMapvote.system.vote.coreTable = LMapvote.system.vote.coreTable or { }
 	LMapvote.system.vote.result = LMapvote.system.vote.result or { }
 
 	netstream.Hook( "LMapvote.system.vote.ResultSend", function( data )
 		LMapvote.system.vote.result = data
-		if ( !LMapvote.panel.votePanel ) then
+		
+		if ( !LMapvote.panel.votePanel or !IsValid( LMapvote.panel.votePanel ) ) then
 			LMapvote.panel.votePanel = vgui.Create( "LMapVote_VOTE" )
 			LMapvote.panel.votePanel:Result_Send( )
 		else
@@ -439,22 +421,27 @@ else
 			LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] = data.Table
 		elseif ( data.Type == 3 ) then
 			LMapvote.system.vote.coreTable[ "Chat" ] = data.Table
-			if ( !LMapvote.panel.votePanel ) then return end
-			LMapvote.panel.votePanel:Refresh_Chat( )
+			
+			if ( LMapvote.panel.votePanel and IsValid( LMapvote.panel.votePanel ) ) then
+				LMapvote.panel.votePanel:Refresh_Chat( )
+			end
 		elseif ( data.Type == 5 ) then	
-			local buffer = LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ]
 			LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] = data.Table
-			if ( !LMapvote.panel.votePanel ) then return end
-			LMapvote.panel.votePanel:Refresh_Progress( key )
+			
+			if ( LMapvote.panel.votePanel and IsValid( LMapvote.panel.votePanel ) ) then
+				LMapvote.panel.votePanel:Refresh_Progress( )
+			end
 		elseif ( data.Type == 6 ) then	
 			LMapvote.system.vote.coreTable[ "Voice" ] = data.Table
-			if ( !LMapvote.panel.votePanel ) then return end
-			LMapvote.panel.votePanel:Refresh_Voice( )
+			
+			if ( LMapvote.panel.votePanel and IsValid( LMapvote.panel.votePanel ) ) then
+				LMapvote.panel.votePanel:Refresh_Voice( )
+			end
 		end
 	end )
 	
 	netstream.Hook( "LMapvote.system.vote.PanelCall", function( )
-		if ( !LMapvote.panel.votePanel ) then
+		if ( !LMapvote.panel.votePanel or !IsValid( LMapvote.panel.votePanel ) ) then
 			LMapvote.panel.votePanel = vgui.Create( "LMapVote_VOTE" )
 		else
 			LMapvote.panel.votePanel:Close( )
@@ -463,17 +450,17 @@ else
 	end )
 
 	netstream.Hook( "LMapvote.system.vote.StopCall", function( )
-		if ( !LMapvote.panel.votePanel ) then return end
-		LMapvote.panel.votePanel:Close( )
+		if ( LMapvote.panel.votePanel and IsValid( LMapvote.panel.votePanel ) ) then
+			LMapvote.panel.votePanel:Close( )
+		end
 	end )
 
 	function LMapvote.system.vote.Vote( caller, map )
-		if ( LMapvote.system.vote.GetStatus( ) == false ) then
-			return
+		if ( LMapvote.system.vote.GetStatus( ) ) then
+			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__PROGRESSALL, {
+				Caller = caller,
+				Map = map
+			} )
 		end
-		LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__PROGRESSALL, {
-			Caller = caller,
-			Map = map
-		} )
 	end
 end

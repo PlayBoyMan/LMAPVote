@@ -1,8 +1,7 @@
 --[[
-	LMAPVote - 1.5.3
-	Copyright ( C ) 2014 ~ L7D
+	LMAPVote - 1.6
+	Copyright ( C ) 2015 ~ L7D
 --]]
-LMapvote.panel = LMapvote.panel or { }
 
 local VOTEPANEL = { }
 
@@ -23,6 +22,7 @@ function VOTEPANEL:Init( )
 		self.Frame:Remove( )
 		self.Frame = nil
 	end
+	
 	if ( self.BackPanel ) then
 		self.BackPanel:Remove( )
 		self.BackPanel = nil
@@ -58,6 +58,7 @@ function VOTEPANEL:Init( )
 			if ( self.screenblur > 0 ) then
 				self.screenblur = self.screenblur - 0.05
 			end
+			
 			if ( self.screenblur <= 0 ) then
 				return
 			end
@@ -85,7 +86,7 @@ function VOTEPANEL:Init( )
 		
 		if ( self.Show ) then
 			draw.SimpleText( "LMAPVote", "LMAPVote_font02_30", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "Copyright ( C ) 2014 ~ L7D", "LMAPVote_font02_15", 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Copyright ( C ) 2015 ~ L7D", "LMAPVote_font02_15", 15, h - 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			draw.SimpleText( "Version - " .. LMapvote.config.Version, "LMAPVote_font02_15", 15, h - 20, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 
 			if ( self.Type == 1 ) then
@@ -135,6 +136,7 @@ function VOTEPANEL:Init( )
 						end
 						
 						draw.SimpleText( data.Name, "LMAPVote_font02_30", w / 2, h * 0.55, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+						
 						if ( LMapvote.system.vote.result.Count ) then
 							draw.SimpleText( LMapvote.system.vote.result.Count .. " players voted.", "LMAPVote_font01_15", w / 2, h * 0.55 + 40, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 						end
@@ -143,6 +145,7 @@ function VOTEPANEL:Init( )
 			end
 		else
 			draw.SimpleText( "LMAPVote", "LMAPVote_font02_15", 15, 25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			
 			self.VoteEndTimePercent = GetGlobalInt( "LMapvote.system.vote.Timer" ) / LMapvote.config.VoteTime
 			self.VoteEndTimePercent_Ani = Lerp( 0.03, self.VoteEndTimePercent_Ani, self.VoteEndTimePercent * 360 )
 				
@@ -248,12 +251,15 @@ function VOTEPANEL:Init( )
 		if ( self.Voice.Running ) then
 			if ( self.Voice.Rotate_Ani == 0 and self.Voice.Rotate <= 360 ) then
 				self.Voice.Rotate = self.Voice.Rotate + 5
+				
 				if ( self.Voice.Rotate_Ani == 0 and self.Voice.Rotate >= 360 ) then
 					self.Voice.Rotate_Ani = 1
 				end
 			end
+			
 			if ( self.Voice.Rotate_Ani == 1 ) then
 				self.Voice.Rotate = self.Voice.Rotate - 1
+				
 				if ( self.Voice.Rotate <= 0 ) then
 					self.Voice.Rotate_Ani = 0
 				end
@@ -266,6 +272,7 @@ function VOTEPANEL:Init( )
 		else
 			self.Voice:SetText( "Voice Chat Start" )
 		end
+		
 		draw.RoundedBox( 0, 0, 0, w, 1, Color( 255, 150, 150, 255 ) )
 		draw.RoundedBox( 0, 0, h - 1, w, 1, Color( 255, 150, 150, 255 ) )
 		draw.RoundedBox( 0, 0, 0, 1, h, Color( 255, 150, 150, 255 ) )
@@ -291,7 +298,7 @@ function VOTEPANEL:Init( )
 	end
 	self.ChatEntry.OnEnter = function( )
 		LMapvote.PlayButtonSound( )
-		if ( string.len( self.ChatEntry:GetValue( ) ) > 0 ) then
+		if ( self.ChatEntry:GetValue( ):len( ) > 0 ) then
 			LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__CHATONLY, self.ChatEntry:GetValue( ) )
 			self.ChatEntry:SetText( "" )
 			self.ChatEntry:RequestFocus( )
@@ -320,50 +327,49 @@ function VOTEPANEL:Init( )
 	self:Refresh_Chat( )
 end
 
-hook.Add( "RenderScreenspaceEffects", "LMapvote.system.RenderScreenspaceEffects", function( )
-	if ( !LMapvote.config.VotePanel_MonochromeEffect ) then return end
-	local panel = LMapvote.panel.votePanel
-	if ( !panel ) then return end
-	if ( !panel.Frame or !panel.BackPanel ) then return end
-	
-	if ( panel.Show ) then
-		panel.screenBL = Lerp( 0.03, panel.screenBL, 0 )
-	else
-		panel.screenBL = Lerp( 0.01, panel.screenBL, 1 )
-	end
+if ( LMapvote.config.VotePanel_MonochromeEffect ) then
+	hook.Add( "RenderScreenspaceEffects", "LMapvote.system.RenderScreenspaceEffects", function( )
+		if ( !LMapvote.config.VotePanel_MonochromeEffect ) then return end
+		local panel = LMapvote.panel.votePanel
+		if ( !panel or !panel.Frame or !panel.BackPanel ) then return end
+		
+		if ( panel.Show ) then
+			panel.screenBL = Lerp( 0.03, panel.screenBL, 0 )
+		else
+			panel.screenBL = Lerp( 0.01, panel.screenBL, 1 )
+		end
 
-	local colData = { }
-	colData[ "$pp_colour_addr" ] = 0
-	colData[ "$pp_colour_addg" ] = 0
-	colData[ "$pp_colour_addb" ] = 0
-	colData[ "$pp_colour_brightness" ] = 0
-	colData[ "$pp_colour_contrast" ] = 1
-	colData[ "$pp_colour_colour" ] = panel.screenBL
-	colData[ "$pp_colour_mulr" ] = 0
-	colData[ "$pp_colour_mulg" ] = 0
-	colData[ "$pp_colour_mulb" ] = 0
-	
-	DrawColorModify( colData )
-end )
+		local colData = { }
+		colData[ "$pp_colour_addr" ] = 0
+		colData[ "$pp_colour_addg" ] = 0
+		colData[ "$pp_colour_addb" ] = 0
+		colData[ "$pp_colour_brightness" ] = 0
+		colData[ "$pp_colour_contrast" ] = 1
+		colData[ "$pp_colour_colour" ] = panel.screenBL
+		colData[ "$pp_colour_mulr" ] = 0
+		colData[ "$pp_colour_mulg" ] = 0
+		colData[ "$pp_colour_mulb" ] = 0
+		
+		DrawColorModify( colData )
+	end )
+end
 
 function VOTEPANEL:Setup( )
 	if ( !LMapvote.system.vote.coreTable ) then return end
+	
 	for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-		self.imageTablebuffer[ #self.imageTablebuffer + 1 ] = { Voter = value.Voter, Map = key, Count = value.Count }
+		self.imageTablebuffer[ #self.imageTablebuffer + 1 ] = {
+			Voter = value.Voter,
+			Map = key,
+			Count = value.Count
+		}
 	end
+	
 	for key, value in pairs( self.imageTablebuffer ) do
 		if ( !LMapvote.map.GetDataByName( value.Map ).Image or LMapvote.map.GetDataByName( value.Map ).Image == "" ) then
-			if ( file.Exists( "maps/thumb/" .. value.Map .. ".png", "GAME" ) ) then
-				self.imageTable[ value.Map ] = 1
-			else
-				self.imageTable[ value.Map ] = 0
-			end
+			self.imageTable[ value.Map ] = file.Exists( "maps/thumb/" .. value.Map .. ".png", "GAME" ) and 1 or 0
 		else
-			if ( file.Exists( "materials/" .. LMapvote.map.GetDataByName( value.Map ).Image, "GAME" ) ) then
-				self.imageTable[ value.Map ] = 2
-			else
-				self.imageTable[ value.Map ] = 0
-			end
+			self.imageTable[ value.Map ] = file.Exists( "materials/" .. LMapvote.map.GetDataByName( value.Map ).Image, "GAME" ) and 2 or 0
 		end
 	end
 end
@@ -371,6 +377,7 @@ end
 function VOTEPANEL:Result_Send( )
 	surface.PlaySound( LMapvote.config.VoteResult_Sound )
 	self.Type = 2
+	
 	timer.Simple( 5, function( )
 		self:Result_Receive( )
 	end )
@@ -387,6 +394,7 @@ function VOTEPANEL:Refresh_Voice( )
 	
 	for key, value in pairs( LMapvote.system.vote.coreTable[ "Voice" ] ) do
 		voiceTable[ value ] = { Volume = 0 }
+		
 		local voice = vgui.Create( "DPanel" )
 		voice:SetSize( self.VoiceMenu:GetWide( ), 50 )
 		voice.Paint = function( pnl, w, h )
@@ -394,7 +402,9 @@ function VOTEPANEL:Refresh_Voice( )
 				draw.SimpleText( "Disconnected Player", "LMAPVote_font01_20", voice:GetTall( ) + 15, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 				return
 			end
+			
 			voiceTable[ value ].Volume = Lerp( 0.03, voiceTable[ value ].Volume, value:VoiceVolume( ) * h )
+			
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 10 ) )
 			draw.RoundedBox( 0, w - 10, h - voiceTable[ value ].Volume, 10, voiceTable[ value ].Volume, Color( 0, 0, 0, 255 ) )
 			draw.SimpleText( value:Name( ), "LMAPVote_font01_20", voice:GetTall( ) + 15, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
@@ -403,12 +413,14 @@ function VOTEPANEL:Refresh_Voice( )
 		local avatar = vgui.Create( "AvatarImage", voice )
 		avatar:SetPos( 0, 0 )
 		avatar:SetSize( voice:GetTall( ), voice:GetTall( ) )
+		
 		if ( IsValid( value ) ) then
 			avatar:SetPlayer( value, 64 )
 			avatar:SetToolTip( "Name : " .. value:Name( ) .. "\nSteamID : " .. value:SteamID( ) )
 		else
 			avatar:SetToolTip( "Disconnected Player." )
 		end
+		
 		self.VoiceMenu:AddItem( voice )
 	end
 end
@@ -420,7 +432,11 @@ function VOTEPANEL:Refresh_Progress( )
 	local buffer2 = { }
 
 	for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
-		buffer[ #buffer + 1 ] = { Voter = value.Voter, Map = key, Count = value.Count }
+		buffer[ #buffer + 1 ] = {
+			Voter = value.Voter,
+			Map = key,
+			Count = value.Count
+		}
 	end
 		
 	table.sort( buffer, function( a, b )
@@ -428,7 +444,10 @@ function VOTEPANEL:Refresh_Progress( )
 	end )
 
 	for i = 1, #buffer do
-		buffer2[ buffer[ i ].Map ] = { Voter = buffer[ i ].Voter, Count = buffer[ i ].Count }
+		buffer2[ buffer[ i ].Map ] = {
+			Voter = buffer[ i ].Voter,
+			Count = buffer[ i ].Count
+		}
 	end
 		
 	LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] = buffer2
@@ -438,6 +457,7 @@ function VOTEPANEL:Refresh_Progress( )
 		progressPanel:SetSize( self.RightMenu:GetWide( ), 100 )
 		progressPanel.Paint = function( pnl, w, h )
 			draw.RoundedBox( 0, 0, 0, 90, h, Color( 0, 0, 0, 100 ) )
+			
 			if ( self.imageTable[ value.Map ] ) then
 				if ( self.imageTable[ value.Map ] == 1 ) then
 					surface.SetDrawColor( 255, 255, 255, 255 )
@@ -451,13 +471,17 @@ function VOTEPANEL:Refresh_Progress( )
 					draw.SimpleText( "No map icon :/", "LMAPVote_font01_15", 90 / 2, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 				end
 			end
+			
 			if ( key == 1 ) then
 				draw.RoundedBox( 0, 0, 0, w, 30, Color( 255, 255, 255, 200 ) )
 			end
+			
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 10, 10, 10, 10 ) )
+			
 			if ( key == 1 ) then
 				draw.SimpleText( "1st", "LMAPVote_font01_15", 15, 15, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			end
+			
 			draw.SimpleText( value.Map, "LMAPVote_font01_20", 15 + 90, 15, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			draw.SimpleText( value.Count .. " players voted", "LMAPVote_font01_15", self.RightMenu:GetWide( ) - 15, 15, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		end
@@ -474,13 +498,16 @@ function VOTEPANEL:Refresh_Progress( )
 				
 		for key2, value2 in pairs( value.Voter ) do
 			if ( !IsValid( value2 ) ) then return end
+			
 			local avatar = vgui.Create( "AvatarImage" )
 			avatar:SetPos( 0, 0 )
 			avatar:SetSize( 30, 30 )
 			avatar:SetPlayer( value2, 64 )
 			avatar:SetToolTip( value2:Name( ) )
+			
 			progressPanel.players:AddItem( avatar )
 		end
+		
 		self.RightMenu:AddItem( progressPanel )
 	end
 end
@@ -492,17 +519,9 @@ function VOTEPANEL:Refresh_MapList( )
 	
 	for key, value in pairs( LMapvote.system.vote.coreTable[ "MapList" ] ) do
 		if ( !value.Image or value.Image == "" ) then
-			if ( file.Exists( "maps/thumb/" .. value.Name .. ".png", "GAME" ) ) then
-				imageTable[ value.Name ] = 1
-			else
-				imageTable[ value.Name ] = 0
-			end
+			imageTable[ value.Name ] = file.Exists( "maps/thumb/" .. value.Name .. ".png", "GAME" ) and 1 or 0
 		else
-			if ( file.Exists( "materials/" .. value.Image, "GAME" ) ) then
-				imageTable[ value.Name ] = 2
-			else
-				imageTable[ value.Name ] = 0
-			end
+			imageTable[ value.Name ] = file.Exists( "materials/" .. value.Image, "GAME" ) and 2 or 0
 		end
 	end
 	
@@ -512,6 +531,7 @@ function VOTEPANEL:Refresh_MapList( )
 		map:SetSize( self.w * 0.13, self.w * 0.13 )
 		map.Paint = function( pnl, w, h )
 			draw.RoundedBox( 0, 0, 0, w, h, Color( 0, 0, 0, 100 ) )
+			
 			if ( imageTable[ value.Name ] ) then
 				if ( imageTable[ value.Name ] == 1 ) then
 					surface.SetDrawColor( 255, 255, 255, 255 )
@@ -525,14 +545,17 @@ function VOTEPANEL:Refresh_MapList( )
 					draw.SimpleText( "No map icon :/", "LMAPVote_font01_15", w / 2, h / 2 - ( 20 / 2 ), Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 				end
 			end
+			
 			draw.RoundedBox( 0, 0, h - 30, w, 30, Color( 0, 0, 0, 100 ) )			
 			draw.SimpleText( value.Name, "LMAPVote_font01_20", w / 2, h - ( 30 / 2 ), Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 		map.DoClick = function( )
 			LMapvote.PlayButtonSound( )
 			LMapvote.system.vote.Vote( LocalPlayer( ), value.Name )
+			
 			timer.Simple( 0.3, function( )
 				self.percent_count = 0
+				
 				for key, value in pairs( LMapvote.system.vote.coreTable[ "Core" ][ "Vote" ] ) do
 					if ( #value.Voter != 0 ) then
 						self.percent_count = self.percent_count + 1
@@ -540,56 +563,64 @@ function VOTEPANEL:Refresh_MapList( )
 				end
 			end )
 		end
+		
 		self.LeftMenu:AddItem( map )
 	end
 end
 
 function VOTEPANEL:Refresh_Chat( keys )
 	self.Chat:Clear( )
+	
 	for key, value in pairs( LMapvote.system.vote.coreTable[ "Chat" ] ) do
 		local chats = vgui.Create( "DPanel" )
 		chats:SetSize( self.Chat:GetWide( ), 20 )
 		chats.Paint = function( pnl, w, h )
 			local playerName = ""
+			
 			if ( IsValid( value.caller ) ) then 
 				playerName = value.caller:Name( )
 			else
 				playerName = "Disconnected Player"
 			end
+			
 			draw.SimpleText( playerName .. " : " .. value.text, "LMAPVote_font01_15", 25, h / 2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		end
 			
 		local avatar = vgui.Create( "AvatarImage", chats )
 		avatar:SetPos( 0, 0 )
 		avatar:SetSize( 20, 20 )
+		
 		if ( IsValid( value.caller ) ) then
 			avatar:SetPlayer( value.caller, 64 )
 		end
+		
 		self.Chat:AddItem( chats )
 	end
 end
 
 function VOTEPANEL:SetStatus( bool )
 	if ( bool ) then
-		if ( self.Show ) then return end
-		if ( self.Frame ) then
+		if ( !self.Show and self.Frame ) then
 			self.Frame:SetVisible( true )
 			self.Frame:MoveTo( self.x, self.y, 0.3, 0 )
 			self.Frame:AlphaTo( 255, 0.3, 0 )
+			
 			timer.Simple( 0.3, function( )
-				if ( !self.Frame ) then return end
-				self.Show = true
+				if ( self.Frame ) then
+					self.Show = true
+				end
 			end )
 		end
 	else
-		if ( !self.Show ) then return end
-		if ( self.Frame ) then
+		if ( self.Show and self.Frame ) then
 			self.Frame:MoveTo( ScrW( ) - 100, self.y, 0.3, 0 )
 			self.Frame:AlphaTo( 0, 0.3, 0 )
+			
 			timer.Simple( 0.3, function( )
-				if ( !self.Frame ) then return end
-				self.Show = false
-				self.Frame:SetVisible( false )
+				if ( self.Frame ) then
+					self.Show = false
+					self.Frame:SetVisible( false )
+				end
 			end )
 		end
 	end
@@ -597,14 +628,16 @@ end
 
 hook.Add( "HUDPaint", "LMapvote.HUDPaint", function( )
 	local panel = LMapvote.panel.votePanel
-	if ( !panel ) then return end
-	if ( panel.Show ) then return end
+	if ( !panel or panel.Show ) then return end
+	
 	draw.RoundedBox( 0, ScrW( ) - 150, ScrH( ) / 2 - 50, 150, 100, Color( 255, 255, 255, 200 ) )
 	draw.SimpleText( "LMAPVote", "LMAPVote_font01_20", ScrW( ) - 65, ScrH( ) / 2 - 35, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 	draw.SimpleText( "Show - F7", "LMAPVote_font01_20", ScrW( ) - 70, ScrH( ) / 2 + 35, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+	
 	if ( panel.Type == 1 ) then
 		panel.VoteEndTimePercent = GetGlobalInt( "LMapvote.system.vote.Timer" ) / LMapvote.config.VoteTime
 		panel.VoteEndTimePercent_Ani = Lerp( 0.03, panel.VoteEndTimePercent_Ani, panel.VoteEndTimePercent * 360 )
+		
 		draw.NoTexture( )
 		if ( GetGlobalInt( "LMapvote.system.vote.Timer" ) <= 10 ) then
 			surface.SetDrawColor( 255, 150, 150, 255 )
@@ -613,28 +646,32 @@ hook.Add( "HUDPaint", "LMapvote.HUDPaint", function( )
 		end
 		LMapvote.geometry.DrawCircle( ScrW( ) - 30, ScrH( ) / 2, 10, 3, 90, panel.VoteEndTimePercent_Ani, 100 )
 	elseif ( panel.Type == 2 ) then
-		if ( LMapvote.system.vote.result ) then
-			if ( LMapvote.system.vote.result.Won ) then
-				draw.RoundedBox( 0, ScrW( ) - 150, ScrH( ) / 2 - 50, 150, 2, Color( 0, 0, 0, 255 ) )
-				draw.RoundedBox( 0, ScrW( ) - 150, ScrH( ) / 2 + 50 - 2, 150, 2, Color( 0, 0, 0, 255 ) )
-				local data = LMapvote.map.GetDataByName( LMapvote.system.vote.result.Won )
-				draw.SimpleText( data.Name, "LMAPVote_font02_25", ScrW( ) - 75, ScrH( ) / 2 - 10, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-				if ( LMapvote.system.vote.result.Count ) then
-					draw.SimpleText( LMapvote.system.vote.result.Count .. " players voted.", "LMAPVote_font01_15", ScrW( ) - 75, ScrH( ) / 2 + 10, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-				end
+		if ( LMapvote.system.vote.result and LMapvote.system.vote.result.Won ) then
+			draw.RoundedBox( 0, ScrW( ) - 150, ScrH( ) / 2 - 50, 150, 2, Color( 0, 0, 0, 255 ) )
+			draw.RoundedBox( 0, ScrW( ) - 150, ScrH( ) / 2 + 50 - 2, 150, 2, Color( 0, 0, 0, 255 ) )
+			
+			local data = LMapvote.map.GetDataByName( LMapvote.system.vote.result.Won )
+			
+			draw.SimpleText( data.Name, "LMAPVote_font02_25", ScrW( ) - 75, ScrH( ) / 2 - 10, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			
+			if ( LMapvote.system.vote.result.Count ) then
+				draw.SimpleText( LMapvote.system.vote.result.Count .. " players voted.", "LMAPVote_font01_15", ScrW( ) - 75, ScrH( ) / 2 + 10, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			end
 		end
 	end
 end )
 
 local pressed = false
+
 hook.Add( "Think", "LMapvote.Think", function( )
 	local panel = LMapvote.panel.votePanel
 	if ( !panel ) then return end
+	
 	if ( panel.Show ) then 
 		pressed = false
 		return 
 	end
+	
 	if ( input.IsKeyDown( KEY_F7 ) and !pressed ) then
 		panel:SetStatus( true )
 		pressed = true
@@ -642,24 +679,31 @@ hook.Add( "Think", "LMapvote.Think", function( )
 end )
 
 function VOTEPANEL:Close( )
-	if ( !self ) then return end
 	if ( self.Frame ) then
 		self.Frame:Remove( )
 		self.Frame = nil
 	end
+	
 	if ( self.BackPanel ) then 
 		self.BackPanel:Remove( )
 		self.BackPanel = nil
 	end
+	
 	LMapvote.panel.votePanel = nil
 end
 
 vgui.Register( "LMapVote_VOTE", VOTEPANEL, "Panel" )
 
 hook.Add( "PlayerStartVoice", "LMapvote.system.PlayerStartVoice", function( pl )
-	LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__VOICEONLY, { Ent = pl, Bool = true } )
+	LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__VOICEONLY, {
+		Ent = pl,
+		Bool = true
+	} )
 end )
 
 hook.Add( "PlayerEndVoice", "LMapvote.system.PlayerEndVoice", function( pl )
-	LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__VOICEONLY, { Ent = pl, Bool = false } )
+	LMapvote.system.vote.Sync( LMAPVOTE_SYNC_ENUM__VOICEONLY, {
+		Ent = pl,
+		Bool = false
+	} )
 end )
